@@ -1,0 +1,25 @@
+{
+  "name": "websocket-multiplayer",
+  "version": "1.0.0",
+  "description": "Building multiplayer game with Native websockets",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronjan98/websocket.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaronjan98/websocket/issues"
+  },
+  "homepage": "https://github.com/aaronjan98/websocket#readme",
+  "dependencies": {
+    "websocket": "^1.0.31"
+  }
+}
