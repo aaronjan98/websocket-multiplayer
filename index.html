@@ -8,14 +8,34 @@
 <body>
     <h1>Ping Pong</h1>
     <button id="btnCreate">New Game</button>
+    <button id="btnJoin">Join Game</button>
+    <input type="text" id="txtGameId">
     <!-- connect to websocket upon initial opening of the browser-->
     <script>
         // HTML elements
         let clientId = null;
+        let gameId = null;
         let ws = new WebSocket('ws://localhost:9090');
         const btnCreate = document.getElementById('btnCreate');
+        const btnJoin = document.getElementById('btnJoin');
+        const txtGameId = document.getElementById('txtGameId');
 
         // wiring events
+        btnJoin.addEventListener('click', e => {
+
+            if (gameId == null) {
+                gameId  = txtGameId.value
+            }
+            
+            const payLoad = {
+                'method': 'join',
+                'clientId': clientId,
+                'gameId': gameId
+            }
+
+            ws.send(JSON.stringify(payLoad));           
+        })
+
         btnCreate.addEventListener('click', e => {
 
             const payLoad = {
@@ -39,9 +59,11 @@
 
             // create
             if (response.method === 'create') {
-                gameId = response.gameId;
+                gameId = response.game.id;
                 console.log('Game successfully created with ID ' + response.game.id + ' with ' + response.game.ball);
             }
+
+            // join
         }
     </script>
 </body>

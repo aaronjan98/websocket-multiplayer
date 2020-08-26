@@ -32,7 +32,8 @@ wsServer.on('request', request => {
             const gameId = guid();
             games[gameId] = {
                 'id': gameId,
-                'ball': 1
+                'ball': 1,
+                'clients': []
             }
 
             const payLoad = {
@@ -42,6 +43,32 @@ wsServer.on('request', request => {
 
             const con = clients[clientId].connection;
             con.send(JSON.stringify(payLoad));
+        }
+
+        // a client wants to join
+        if (result.method === 'join') {
+            const clientId = result.clientId;
+            const gameId = result.gameId;
+            const game = games[gameId];
+            if (game.clients.length > 2) {
+                // two players max
+                return;
+            }
+            const color = {'0': 'red', '1': 'blue'}[game.clients.length];
+            game.clients.push({
+                'clientId': clientId,
+                'color': color
+            });
+
+            const payLoad = {
+                'method': 'join',
+                'game': game
+            };
+
+            // look through all the clients and tell them another player has joined
+            game.clients.forEach(c => {
+                clients[c.clientId].connection.send(JSON.stringify(payLoad));
+            });
         }
     })
 
