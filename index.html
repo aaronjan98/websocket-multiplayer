@@ -9,12 +9,17 @@
     <h1>Ping Pong</h1>
     <!-- connect to websocket upon initial opening of the browser-->
     <script>
+        let clientId = null;
         let ws = new WebSocket('ws://localhost:9090');
         // when the surver sends the client a message
         ws.onmessage = message => {
             // string server sends: message.data
             const response = JSON.parse(message.data);
-            console.log(response);
+            // Connect Method: save clientId in global name space
+            if (response.method === 'connect') {
+                clientId = response.clientId;
+                console.log('Client ID set successfully: ' + clientId);
+            }
         }
     </script>
 </body>
