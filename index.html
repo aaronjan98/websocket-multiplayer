@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>websocket-multiplayer</title>
+</head>
+<body>
+    <h1>Ping Pong</h1>
+    <!-- connect to websocket upon initial opening of the browser-->
+    <script>
+        let ws = new WebSocket('ws://localhost:9090');
+        // when the surver sends the client a message
+        ws.onmessage = message => {
+            // string server sends: message.data
+            const response = JSON.parse(message.data);
+            console.log(response);
+        }
+    </script>
+</body>
+</html>
