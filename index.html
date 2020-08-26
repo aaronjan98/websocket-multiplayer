@@ -10,6 +10,7 @@
     <button id="btnCreate">New Game</button>
     <button id="btnJoin">Join Game</button>
     <input type="text" id="txtGameId">
+    <div id="divPlayers"></div>
     <!-- connect to websocket upon initial opening of the browser-->
     <script>
         // HTML elements
@@ -19,6 +20,7 @@
         const btnCreate = document.getElementById('btnCreate');
         const btnJoin = document.getElementById('btnJoin');
         const txtGameId = document.getElementById('txtGameId');
+        const divPlayers = document.getElementById('divPlayers');
 
         // wiring events
         btnJoin.addEventListener('click', e => {
@@ -64,6 +66,21 @@
             }
 
             // join
+            if (response.method === 'join') {
+                const game = response.game;
+
+                while(divPlayers.firstChild) {
+                    divPlayers.removeChild(divPlayers.firstChild);
+                }
+
+                game.clients.forEach(c => {
+                    const d = document.createElement('div');
+                    d.style.width = '200px';
+                    d.style.background = c.color;
+                    d.textContent = c.clientId;
+                    divPlayers.appendChild(d);
+                });
+            }
         }
     </script>
 </body>
