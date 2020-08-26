@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/aaronjan98/websocket#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "websocket": "^1.0.31"
   }
 }
