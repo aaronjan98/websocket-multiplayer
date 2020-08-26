@@ -23,18 +23,24 @@
                 'clientId': clientId
             }
 
-            ws.send(JOSN.stringify(payLoad));
+            ws.send(JSON.stringify(payLoad));
             
         })
         // when the surver sends the client a message
         ws.onmessage = message => {
             // string server sends: message.data
             const response = JSON.parse(message.data);
-            
+
             // Connect Method: save clientId in global name space
             if (response.method === 'connect') {
                 clientId = response.clientId;
                 console.log('Client ID set successfully: ' + clientId);
+            }
+
+            // create
+            if (response.method === 'create') {
+                gameId = response.gameId;
+                console.log('Game successfully created with ID ' + response.game.id + ' with ' + response.game.ball);
             }
         }
     </script>
