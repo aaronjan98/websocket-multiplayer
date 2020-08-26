@@ -10,6 +10,7 @@ httpServer.listen(9090, () => console.log(`listening on 9090`));
 
 // hash map clients
 const clients = {};
+const games = {};
 
 const wsServer = new websocketServer({
     'httpServer': httpServer
@@ -20,11 +21,28 @@ wsServer.on('request', request => {
     const connection = request.accept(null, request.origin);
     connection.on('open', () => console.log('opened'));
     connection.on('close', () => console.log('closed'));
+
     connection.on('message', message => {
         // Data that the server receives
         const result = JSON.parse(message.utf8Data);
         // I have received a message from the client
-        console.log('result: ', result);
+        // User wants to create a new game
+        if (result.method === 'create') {
+            const clientId = result.clientId;
+            const gameId = guid();
+            games[gameId] = {
+                'id': gameId,
+                'ball': 1
+            }
+
+            const payLoad = {
+                'method': 'create',
+                'game': games[gameId]
+            }
+
+            const con = clients[clientId].connection;
+            con.send(JSON.stringify(payLoad));
+        }
     })
 
     // generate a new clientId

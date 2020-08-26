@@ -7,14 +7,30 @@
 </head>
 <body>
     <h1>Ping Pong</h1>
+    <button id="btnCreate">New Game</button>
     <!-- connect to websocket upon initial opening of the browser-->
     <script>
+        // HTML elements
         let clientId = null;
         let ws = new WebSocket('ws://localhost:9090');
+        const btnCreate = document.getElementById('btnCreate');
+
+        // wiring events
+        btnCreate.addEventListener('click', e => {
+
+            const payLoad = {
+                'method': 'create',
+                'clientId': clientId
+            }
+
+            ws.send(JOSN.stringify(payLoad));
+            
+        })
         // when the surver sends the client a message
         ws.onmessage = message => {
             // string server sends: message.data
             const response = JSON.parse(message.data);
+            
             // Connect Method: save clientId in global name space
             if (response.method === 'connect') {
                 clientId = response.clientId;
