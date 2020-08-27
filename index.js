@@ -1,6 +1,7 @@
 const http = require('http');
 // serve this page on another port with express
-const app = require('express')();
+const express = require('express');
+const app = express();
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.listen(9091, () => console.log('Listening on http port 9091'));
 
