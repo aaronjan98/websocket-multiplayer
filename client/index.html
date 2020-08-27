@@ -9,17 +9,20 @@
 <body>
     <div class="container">
         <h1>Ping Pong</h1>
+
+        <!-- Pong Elements -->
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <script src="pong.js"></script>
         
+        <!-- Start Multiplayer Game -->
         <button id="btnCreate">New Game</button>
         <button id="btnJoin">Join Game</button>
         <input type="text" id="txtGameId">
         <div id="divPlayers"></div>
         <div id="divBoard"></div>
 
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
-
         <!-- connect to websocket upon initial opening of the browser-->
-        <script src="pong.js"></script>
+        <script src="game.js"></script>
     </div>
 </body>
 </html>
