@@ -2,8 +2,10 @@ const http = require('http');
 // serve this page on another port with express
 const express = require('express');
 const app = express();
-app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/', (req, res) => res.sendFile(__dirname + '/client/index.html'));
 app.listen(9091, () => console.log('Listening on http port 9091'));
+
+app.use(express.static('client'));
 
 const websocketServer = require('websocket').server;
 const httpServer = http.createServer();
