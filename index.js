@@ -28,6 +28,7 @@ wsServer.on('request', request => {
     connection.on('message', message => {
         // Data that the server receives
         const result = JSON.parse(message.utf8Data);
+        console.log('result from message connection: ', result);
         // I have received a message from the client
         // User wants to create a new game
         if (result.method === 'create') {
@@ -35,8 +36,8 @@ wsServer.on('request', request => {
             const gameId = guid();
             games[gameId] = {
                 'id': gameId,
-                'ball': 1,
-                'clients': []
+                'clients': [],
+                'state': {}
             }
 
             const payload = {
@@ -53,10 +54,16 @@ wsServer.on('request', request => {
             const clientId = result.clientId;
             const gameId = result.gameId;
             let game = games[gameId];
-            if (game.clients.length > 2) {
-                // two players max
-                return;
+
+            try {
+                if ((game[clients]).length > 2) {
+                    // two players max
+                    alert('No more than two players is allowed.');
+                }
+            } catch {
+                // pass
             }
+
             const color = {'0': 'red', '1': 'blue'}[game.clients.length];
             game.clients.push({
                 'clientId': clientId,
@@ -64,7 +71,10 @@ wsServer.on('request', request => {
             });
 
             //start the game
-            if (game.clients.length === 2) updateGameState();
+            if (game.clients.length === 2) {
+
+                updateGameState();
+            }
 
             const payload = {
                 'method': 'join',
@@ -77,33 +87,29 @@ wsServer.on('request', request => {
             });
         }
 
-        // a user plays
         // once a player moves the paddle, that info is sent to the server here to update the state and send it back to the other player.
-        // if (result.method === 'play') {
-        //     const clientId = result.clientId;
-        //     const gameId = result.gameId;
-        //     const playerColor = result.playerColor;
-        //     const paddle1Y = result.paddle1Y;
-        //     const paddle2Y = result.paddle2Y;
-        //     let state = {};
-            
-        //     try {
-        //         state = games[gameId].state;
-        //     } catch (TypError) {
-        //         state = {}
-        //     };
-            
-        //     state['playerColor'] = playerColor;
-        //     // only update your own paddle position so that you don't affect the other player when the state updates.
-        //     if (playerColor === 'red') {
-        //         // not sure if it should be state['paddle1Y'] with the quotes
-        //         state.paddle1Y = paddle1Y;
-        //     } else if (playerColor === 'blue') {
-        //         state.paddle2Y = paddle2Y;
-        //     }
+        if (result.method === 'play') {
+            const clientId = result.clientId;
+            const gameId = result.gameId;
+            const playerColor = result.playerColor;
+            const playerPaddle1Y = result.paddle1Y;
+            const playerPaddle2Y = result.paddle2Y;
+            let state = {};
 
-        //     games[gameId].state = state;
-        // }
+            state = games[gameId].state;
+            
+            state['playerColor'] = playerColor;
+
+            // only update your own paddle position so that you don't affect the other player when the state updates.
+            if (playerColor === 'red') {
+                // not sure if it should be state['paddle1Y'] with the quotes
+                state.paddle1Y = playerPaddle1Y;
+            } else if (playerColor === 'blue') {
+                state.paddle2Y = playerPaddle2Y;
+            }
+
+            games[gameId].state = state;
+        }
     })
 
     // generate a new clientId

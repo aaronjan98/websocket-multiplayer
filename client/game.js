@@ -62,12 +62,13 @@ ws.onmessage = message => {
     if (response.method === 'connect') {
         clientId = response.clientId;
         console.log('Client ID set successfully: ' + clientId);
+        console.log('connect response: ', response);
     }
 
     // create
     if (response.method === 'create') {
         gameId = response.game.id;
-        console.log('Game successfully created with ID ' + response.game.id + ' with ' + response.game.ball);
+        console.log('Game successfully created with ID: ' + response.game.id);
         copyToClipboard(response.game.id)
     }
 
@@ -76,7 +77,9 @@ ws.onmessage = message => {
         // use information from this response from the server to update the game to match the changes that my other opponent made
 
         //{1: "red", 1}
-        if (!response.game.state) return;
+        if (!response.game.state) {
+            response.game.state = {};
+        }
 
         for(const b of Object.keys(response.game.state))
         {
@@ -91,6 +94,7 @@ ws.onmessage = message => {
 
     // join
     if (response.method === 'join') {
+        console.log('response when joining: ', response);
         const game = response.game;
 
         // what does this do?
@@ -106,7 +110,10 @@ ws.onmessage = message => {
             divPlayers.appendChild(d);
 
             // c.color is the personal color so this makes it dynamic
-            if (c.clientId === clientId) playerColor = c.color;
+            if (c.clientId === clientId) {
+                playerColor = c.color;
+                console.log('player is this color: ', playerColor);
+            }
         });
 
         /*    Put things here if you want to render
@@ -138,6 +145,7 @@ ws.onmessage = message => {
         }
     }
     
+    // play
     window.onload = function() {
         canvas = document.getElementById('gameCanvas');
         canvasContext = canvas.getContext("2d");
