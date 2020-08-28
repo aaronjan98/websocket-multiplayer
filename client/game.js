@@ -97,17 +97,18 @@ ws.onmessage = message => {
         console.log('response when joining: ', response);
         const game = response.game;
 
-        // what does this do?
+        // while divPlayers is empty, remove all the elements
         while(divPlayers.firstChild) {
             divPlayers.removeChild(divPlayers.firstChild);
         }
 
         game.clients.forEach(c => {
-            const d = document.createElement('div');
-            d.style.width = '200px';
-            d.style.background = c.color;
-            d.textContent = c.clientId;
-            divPlayers.appendChild(d);
+            /* visual confirmation that the user is connected */
+            // const d = document.createElement('div');
+            // d.style.width = '200px';
+            // d.style.background = c.color;
+            // d.textContent = c.clientId;
+            // divPlayers.appendChild(d);
 
             // c.color is the personal color so this makes it dynamic
             if (c.clientId === clientId) {
