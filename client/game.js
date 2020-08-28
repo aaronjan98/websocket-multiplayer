@@ -71,6 +71,24 @@ ws.onmessage = message => {
         copyToClipboard(response.game.id)
     }
 
+    // update
+    if (response.method === 'update') {
+        // use information from this response from the server to update the game to match the changes that my other opponent made
+
+        //{1: "red", 1}
+        if (!response.game.state) return;
+
+        for(const b of Object.keys(response.game.state))
+        {
+            const color = response.game.state[b];
+            if (color === 'red') {
+                paddle1Y = response.game.state.paddle1Y - (PADDLE_HEIGHT/2);
+            } else if (color === 'blue') {
+                paddle2Y = response.game.state.paddle2Y - (PADDLE_HEIGHT/2);
+            }
+        }
+    }
+
     // join
     if (response.method === 'join') {
         const game = response.game;
@@ -87,6 +105,7 @@ ws.onmessage = message => {
             d.textContent = c.clientId;
             divPlayers.appendChild(d);
 
+            // c.color is the personal color so this makes it dynamic
             if (c.clientId === clientId) playerColor = c.color;
         });
 
@@ -137,13 +156,23 @@ ws.onmessage = message => {
             var mousePos = calculateMousePos(evt);
 
             // put logic to decide which player gets what paddle
-            /* the paddles aren't going to move before pressing
-            game start */
+            /* the paddles aren't going to move before pressing game start */
             if (playerColor === 'red'){
                 paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
             } else if (playerColor === 'blue') {
                 paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
             }
+
+            // send to the server the information that is needed to replicate the change that this event listener listened upon.
+            let payload = {
+                'method': 'play',
+                'clientId': clientId,
+                'gameId': gameId,
+                'playerColor': playerColor,
+                'paddle1Y': paddle1Y,
+                'paddle2Y': paddle2Y
+            }
+            ws.send(JSON.stringify(payload));
         });
     
         // position of the ball before the initial server
