@@ -15,6 +15,8 @@ const PADDLE_THICKNESS = 10;
 const PADDLE_HEIGHT = 90;
 
 var showingWinScreen = false;
+var multiplayerMode = false;
+var mousePos;
 
 // HTML elements
 let clientId = null;
@@ -97,6 +99,11 @@ ws.onmessage = message => {
         console.log('response when joining: ', response);
         const game = response.game;
 
+        // doing this to prevent premature requests of update method
+        if(game.clients.length === 2) {
+            multiplayerMode = true;
+        }
+
         // while divPlayers is empty, remove all the elements
         while(divPlayers.firstChild) {
             divPlayers.removeChild(divPlayers.firstChild);
@@ -162,26 +169,7 @@ ws.onmessage = message => {
         canvas.addEventListener('mousedown', handleMouseClick);
     
         canvas.addEventListener('mousemove', function(evt) {
-            var mousePos = calculateMousePos(evt);
-
-            // put logic to decide which player gets what paddle
-            /* the paddles aren't going to move before pressing game start */
-            if (playerColor === 'red'){
-                paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
-            } else if (playerColor === 'blue') {
-                paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
-            }
-
-            // send to the server the information that is needed to replicate the change that this event listener listened upon.
-            let payload = {
-                'method': 'play',
-                'clientId': clientId,
-                'gameId': gameId,
-                'playerColor': playerColor,
-                'paddle1Y': paddle1Y,
-                'paddle2Y': paddle2Y
-            }
-            ws.send(JSON.stringify(payload));
+            mousePos = calculateMousePos(evt);
         });
     
         // position of the ball before the initial server
@@ -321,21 +309,47 @@ ws.onmessage = message => {
         }
     
         // as the puck increase speed in the y-direction, the computer paddle increase mm.
-        if(Math.abs(ballSpeedY) > 6) {
-            paddleMovement = 6;
-        }else if(Math.abs(ballSpeedY) > 4 && Math.abs(ballSpeedY) <= 6){
-            paddleMovement = 6;
-        }else if(Math.abs(ballSpeedY) > 3 && Math.abs(ballSpeedY) <= 4){
-            paddleMovement = 5.5;
-        }else if(Math.abs(ballSpeedY) >= 1 && Math.abs(ballSpeedY) <= 3){
-            paddleMovement = 5;
-        }else if(Math.abs(ballSpeedY) > 0 && Math.abs(ballSpeedY) < 1){
-            paddleMovement = 4;
-        }else if(Math.abs(ballSpeedY) === 0){
-            paddleMovement = 3.5;
+        // if(Math.abs(ballSpeedY) > 6) {
+        //     paddleMovement = 6;
+        // }else if(Math.abs(ballSpeedY) > 4 && Math.abs(ballSpeedY) <= 6){
+        //     paddleMovement = 6;
+        // }else if(Math.abs(ballSpeedY) > 3 && Math.abs(ballSpeedY) <= 4){
+        //     paddleMovement = 5.5;
+        // }else if(Math.abs(ballSpeedY) >= 1 && Math.abs(ballSpeedY) <= 3){
+        //     paddleMovement = 5;
+        // }else if(Math.abs(ballSpeedY) > 0 && Math.abs(ballSpeedY) < 1){
+        //     paddleMovement = 4;
+        // }else if(Math.abs(ballSpeedY) === 0){
+        //     paddleMovement = 3.5;
+        // }
+        // else if(Math.abs(ballSpeedY) == 0 && Math.abs(ballSpeedX) == 0){
+        //     paddleMovement = 0;
+        // }
+
+
+        // put logic to decide which player gets what paddle
+        /* the paddles aren't going to move before pressing game start */
+        if (playerColor === 'red'){
+            paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
+        } else if (playerColor === 'blue') {
+            paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
         }
-        else if(Math.abs(ballSpeedY) == 0 && Math.abs(ballSpeedX) == 0){
-            paddleMovement = 0;
+
+        // only send payload when multiplayerMode = true
+        if(multiplayerMode) {
+            // send to the server the information that is needed to replicate the change that this event listener listened upon.
+            let payload = {
+                'method': 'play',
+                'clientId': clientId,
+                'gameId': gameId,
+                'playerColor': playerColor,
+                'paddle1Y': paddle1Y,
+                'paddle2Y': paddle2Y,
+                'ballX': ballX,
+                'ballY': ballY
+            }
+            
+            ws.send(JSON.stringify(payload));
         }
     }
     

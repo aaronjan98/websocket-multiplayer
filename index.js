@@ -65,6 +65,7 @@ wsServer.on('request', request => {
             }
 
             const color = {'0': 'red', '1': 'blue'}[game.clients.length];
+            
             game.clients.push({
                 'clientId': clientId,
                 'color': color
@@ -103,9 +104,9 @@ wsServer.on('request', request => {
             // only update your own paddle position so that you don't affect the other player when the state updates.
             if (playerColor === 'red') {
                 // not sure if it should be state['paddle1Y'] with the quotes
-                state.paddle1Y = playerPaddle1Y;
+                state.paddle1Y = playerPaddle1Y+45;
             } else if (playerColor === 'blue') {
-                state.paddle2Y = playerPaddle2Y;
+                state.paddle2Y = playerPaddle2Y+45;
             }
 
             games[gameId].state = state;
