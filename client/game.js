@@ -150,11 +150,7 @@ ws.onmessage = message => {
         ballX = (30 + PADDLE_THICKNESS);
     
         // calibrating ballY position
-        let mouseMoveBall = function(evt) {
-            // let mousePos = calculateMousePos(evt);
-            /* need to figure out which paddle has the serve to calculate
-               the ball position on the position of the paddle rather than
-               the position of the mouse. But only before the server. */
+        let puckResetPosition = function(evt) {
             ballY = paddle1Y + PADDLE_HEIGHT / 2;
         };
     
@@ -164,12 +160,12 @@ ws.onmessage = message => {
                 return Math.floor(Math.random()*(max-min+1)+min);
             }
             ballSpeedY = getRandomNumberBetween(-8, 8);
-            canvas.removeEventListener('mousemove', mouseMoveBall);
+            canvas.removeEventListener('mousemove', puckResetPosition);
             canvas.removeEventListener('click', shootBall);
         };
         
         canvas.addEventListener('click', shootBall);
-        canvas.addEventListener('mousemove', mouseMoveBall);
+        canvas.addEventListener('mousemove', puckResetPosition);
     }
     
     function ballReset() {
@@ -177,9 +173,11 @@ ws.onmessage = message => {
             showingWinScreen = true;
         }
     
+        // to reset the puck, it can't be traveling in the y-direction
         ballSpeedY = 0;
         
-        if(ballSpeedX < 0){
+        // to reset the puck you have to know which direction the point made it to, which you can tell with the negative and positive x-directional speed of the puck.
+        if(ballSpeedX < 0){ // paddle 2
             ballSpeedX = 0;
             ballX = canvas.width - (PADDLE_THICKNESS + 30);
     
@@ -201,8 +199,8 @@ ws.onmessage = message => {
                 
                 computerServe();
             }, 1500)
-    
-        } else if (ballSpeedX > 0){
+        // hold the puck until you click to serve
+        } else if (ballSpeedX >= 0){ // paddle 1
             ballSpeedX = 0;
             ballX = (25 + PADDLE_THICKNESS);
     
