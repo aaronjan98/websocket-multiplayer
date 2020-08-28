@@ -146,12 +146,16 @@ ws.onmessage = message => {
             }
         });
     
-        // maybe
+        // position of the ball before the initial server
         ballX = (30 + PADDLE_THICKNESS);
     
+        // calibrating ballY position
         let mouseMoveBall = function(evt) {
-            let mousePos = calculateMousePos(evt);
-            ballY = mousePos.y;
+            // let mousePos = calculateMousePos(evt);
+            /* need to figure out which paddle has the serve to calculate
+               the ball position on the position of the paddle rather than
+               the position of the mouse. But only before the server. */
+            ballY = paddle1Y + PADDLE_HEIGHT / 2;
         };
     
         let shootBall = function(evt) {
@@ -271,6 +275,8 @@ ws.onmessage = message => {
                 ballReset();
             }
         }
+
+        // puck changes direction when bumping up the walls
         if(ballY < 0){
             ballSpeedY = -ballSpeedY;
         }
@@ -278,6 +284,7 @@ ws.onmessage = message => {
             ballSpeedY = -ballSpeedY;
         }
     
+        // as the puck increase speed in the y-direction, the computer paddle increase mm.
         if(Math.abs(ballSpeedY) > 6) {
             paddleMovement = 6;
         }else if(Math.abs(ballSpeedY) > 4 && Math.abs(ballSpeedY) <= 6){
