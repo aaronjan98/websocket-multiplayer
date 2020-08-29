@@ -132,7 +132,7 @@ ws.onmessage = message => {
 
     }
 
-    /****** Render the entire pong canvas below ******/
+    /****************** Render the entire canvas below ******************/
 
     function calculateMousePos(evt) {
         var rect = canvas.getBoundingClientRect();
@@ -145,7 +145,7 @@ ws.onmessage = message => {
         };
     }
     
-    
+    // ? function to restart the game
     function handleMouseClick(evt) {
         if(showingWinScreen) {
             player1Score = 0;
@@ -220,12 +220,13 @@ ws.onmessage = message => {
             };
             
             positionServe();
+
+            //* This logic is meant for the AI; I'll have to think about switching it to multi-player
             setTimeout(() => {
                 function getRandomNumberBetween(min,max){
                     return Math.floor(Math.random()*(max-min+1)+min);
                 }
                 ballSpeedY = getRandomNumberBetween(-8, 8);
-                console.log('ballSpeedY', ballSpeedY);
                 
                 computerServe();
             }, 1500)
@@ -234,6 +235,7 @@ ws.onmessage = message => {
             ballSpeedX = 0;
             ballX = (25 + PADDLE_THICKNESS);
     
+            //! this is the culprit (maybe) for the weird puck mms.
             let mouseMoveBall = function(evt) {
                 let mousePos = calculateMousePos(evt);
                 ballY = mousePos.y;
@@ -254,6 +256,7 @@ ws.onmessage = message => {
         }
     }
     
+    //? why is this here?
     let paddleMovement = 4;
     
     function computerMovement() {
@@ -274,13 +277,13 @@ ws.onmessage = message => {
             computerMovement();
         }
     
-        // what was i thinking when writing this?
+        //? what was i thinking when writing this?
         ballX += ballSpeedX;
         ballY += ballSpeedY;
     
         //adjust the ball bounce from the paddles
-        if(ballX <= (PADDLE_THICKNESS + 15)) {
-            if(ballY > (paddle1Y-20) && ballY < paddle1Y+PADDLE_HEIGHT+20) {
+        if (ballX <= (PADDLE_THICKNESS + 15)) {
+            if (ballY > (paddle1Y-20) && ballY < paddle1Y+PADDLE_HEIGHT+20) {
                 
                 if(Math.abs(ballSpeedX) < 15) {
                     ballSpeedX = -ballSpeedX * 1.07;
@@ -290,12 +293,12 @@ ws.onmessage = message => {
     
                 var deltaY = ballY - (paddle1Y+PADDLE_HEIGHT/2);
                 ballSpeedY = deltaY * 0.15;
-            }else {
+            } else {
                 player2Score++;
                 ballReset();
             }
         }
-        if(ballX >= (canvas.width - (PADDLE_THICKNESS + 15))) {
+        else if (ballX >= (canvas.width - (PADDLE_THICKNESS + 15))) {
             if(ballY > (paddle2Y-20) && ballY < paddle2Y+PADDLE_HEIGHT+20) {
                 ballSpeedX = -ballSpeedX;
     
@@ -334,14 +337,13 @@ ws.onmessage = message => {
         // }
 
 
-        // only send payload when playing multiplayer
+        //* only send payload when playing multiplayer
         if(multiplayerMode) {
-            // put logic to decide which player gets what paddle
-            /* the paddles aren't going to move before pressing game start */
             
             if(!mousePos) return;
-
-            if (playerColor === 'red'){
+            
+            // put logic to decide which player gets what paddle
+            if (playerColor === 'red') {
                 paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
             } else if (playerColor === 'blue') {
                 paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
@@ -362,6 +364,9 @@ ws.onmessage = message => {
             }
             
             ws.send(JSON.stringify(payload));
+        } else {
+            // if not multiplayer, the person is always going to play player1
+            paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
         }
     }
     
