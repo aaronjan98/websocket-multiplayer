@@ -11,6 +11,8 @@ const websocketServer = require('websocket').server;
 const httpServer = http.createServer();
 httpServer.listen(9090, () => console.log(`listening on 9090`));
 
+let color = 'red';
+
 // hash map clients
 const clients = {};
 let games = {};
@@ -28,7 +30,8 @@ wsServer.on('request', request => {
     connection.on('message', message => {
         // Data that the server receives
         const result = JSON.parse(message.utf8Data);
-        console.log('result from message connection: ', result);
+        // console.log('result from message connection: ', result);
+
         // I have received a message from the client
         // User wants to create a new game
         if (result.method === 'create') {
@@ -64,7 +67,7 @@ wsServer.on('request', request => {
                 // pass
             }
 
-            const color = {'0': 'red', '1': 'blue'}[game.clients.length];
+            color = {'0': 'red', '1': 'blue'}[game.clients.length];
             
             game.clients.push({
                 'clientId': clientId,
@@ -90,16 +93,23 @@ wsServer.on('request', request => {
 
         // once a player moves the paddle, that info is sent to the server here to update the state and send it back to the other player.
         if (result.method === 'play') {
-            const clientId = result.clientId;
             const gameId = result.gameId;
-            const playerColor = result.playerColor;
-            const playerPaddle1Y = result.paddle1Y;
-            const playerPaddle2Y = result.paddle2Y;
+            let playerColor = result.playerColor;
+            let playerPaddle1Y = result.paddle1Y;
+            let playerPaddle2Y = result.paddle2Y;
+            let ballX = result.ballX;
+            let ballY = result.ballY;
+            let ballSpeedX = result.ballSpeedX;
+            let ballSpeedY = result.ballSpeedY;
             let state = {};
 
             state = games[gameId].state;
             
-            state['playerColor'] = playerColor;
+            state.playerColor = playerColor;
+            state.ballX = ballX;
+            state.ballY = ballY;
+            state.ballSpeedX = ballSpeedX;
+            state.ballSpeedY = ballSpeedY;
 
             // only update your own paddle position so that you don't affect the other player when the state updates.
             if (playerColor === 'red') {
@@ -110,6 +120,7 @@ wsServer.on('request', request => {
             }
 
             games[gameId].state = state;
+            // console.log('GAMES: ', games);
         }
     })
 
@@ -132,10 +143,11 @@ function updateGameState(){
 
     //{"gameid", fasdfsf}
     for (const g of Object.keys(games)) {
-        const game = games[g]
+        const game = games[g];
+        // console.log('game from server: ', game.state);
         const payLoad = {
             "method": "update",
-            "game": game
+            "game": game.state
         }
 
         game.clients.forEach(c=> {

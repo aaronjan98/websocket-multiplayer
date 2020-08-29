@@ -78,20 +78,22 @@ ws.onmessage = message => {
     if (response.method === 'update') {
         // use information from this response from the server to update the game to match the changes that my other opponent made
 
-        //{1: "red", 1}
-        if (!response.game.state) {
-            response.game.state = {};
+        let cstate = response.game;
+        // console.log('update ballX: ', cstate.ballX);
+
+        // updating paddle position for player who didn't move that paddle
+        let color = cstate.playerColor;
+        if (color === 'red') {
+            paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
+        } else if (color === 'blue') {
+            paddle2Y = cstate.paddle2Y - (PADDLE_HEIGHT/2);
         }
 
-        for(const b of Object.keys(response.game.state))
-        {
-            const color = response.game.state[b];
-            if (color === 'red') {
-                paddle1Y = response.game.state.paddle1Y - (PADDLE_HEIGHT/2);
-            } else if (color === 'blue') {
-                paddle2Y = response.game.state.paddle2Y - (PADDLE_HEIGHT/2);
-            }
-        }
+        // update ball position and speed
+        ballX = cstate.ballX;
+        ballY = cstate.ballY;
+        ballSpeedX = cstate.ballSpeedX;
+        ballSpeedY = cstate.ballSpeedY;
     }
 
     // join
@@ -120,7 +122,6 @@ ws.onmessage = message => {
             // c.color is the personal color so this makes it dynamic
             if (c.clientId === clientId) {
                 playerColor = c.color;
-                console.log('player is this color: ', playerColor);
             }
         });
 
@@ -169,10 +170,13 @@ ws.onmessage = message => {
         canvas.addEventListener('mousedown', handleMouseClick);
     
         canvas.addEventListener('mousemove', function(evt) {
-            mousePos = calculateMousePos(evt);
+            let eventMousePos = calculateMousePos(evt);
+            if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
+                mousePos = eventMousePos;
+            }
         });
     
-        // position of the ball before the initial server
+        // position of the ball before the initial serve
         ballX = (30 + PADDLE_THICKNESS);
     
         // calibrating ballY position
@@ -268,6 +272,7 @@ ws.onmessage = message => {
         
         // computerMovement();
     
+        // what is this for?
         ballX += ballSpeedX;
         ballY += ballSpeedY;
     
@@ -327,16 +332,19 @@ ws.onmessage = message => {
         // }
 
 
-        // put logic to decide which player gets what paddle
-        /* the paddles aren't going to move before pressing game start */
-        if (playerColor === 'red'){
-            paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
-        } else if (playerColor === 'blue') {
-            paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
-        }
-
         // only send payload when multiplayerMode = true
         if(multiplayerMode) {
+            // put logic to decide which player gets what paddle
+            /* the paddles aren't going to move before pressing game start */
+            
+            if(!mousePos) return;
+
+            if (playerColor === 'red'){
+                paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
+            } else if (playerColor === 'blue') {
+                paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
+            }
+            
             // send to the server the information that is needed to replicate the change that this event listener listened upon.
             let payload = {
                 'method': 'play',
@@ -346,7 +354,9 @@ ws.onmessage = message => {
                 'paddle1Y': paddle1Y,
                 'paddle2Y': paddle2Y,
                 'ballX': ballX,
-                'ballY': ballY
+                'ballY': ballY,
+                'ballSpeedX': ballSpeedX,
+                'ballSpeedY': ballSpeedY
             }
             
             ws.send(JSON.stringify(payload));
@@ -383,7 +393,7 @@ ws.onmessage = message => {
         colorCircle(ballX, ballY, 10, 'yellow');
     
         //left player paddle
-        colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , 'dodgerblue');
+        colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , 'blue');
         
         //right computer paddle
         colorPaddle(PADDLE_THICKNESS, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y + PADDLE_HEIGHT , 'red');
