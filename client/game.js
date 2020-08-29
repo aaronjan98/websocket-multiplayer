@@ -36,26 +36,26 @@ btnJoin.addEventListener('click', e => {
         gameId  = txtGameId.value
     }
     
-    const payLoad = {
+    const payload = {
         'method': 'join',
         'clientId': clientId,
         'gameId': gameId
     }
 
-    ws.send(JSON.stringify(payLoad));           
+    ws.send(JSON.stringify(payload));           
 })
 
 btnCreate.addEventListener('click', e => {
 
-    const payLoad = {
+    const payload = {
         'method': 'create',
         'clientId': clientId
     }
 
-    ws.send(JSON.stringify(payLoad));
+    ws.send(JSON.stringify(payload));
     
 })
-// when the surver sends the client a message
+// when the server sends the client a message
 ws.onmessage = message => {
     // string server sends: message.data
     const response = JSON.parse(message.data);
@@ -71,7 +71,7 @@ ws.onmessage = message => {
     if (response.method === 'create') {
         gameId = response.game.id;
         console.log('Game successfully created with ID: ' + response.game.id);
-        copyToClipboard(response.game.id)
+        copyToClipboard(response.game.id);
     }
 
     // update
@@ -92,8 +92,8 @@ ws.onmessage = message => {
         // update ball position and speed
         ballX = cstate.ballX;
         ballY = cstate.ballY;
-        ballSpeedX = cstate.ballSpeedX;
-        ballSpeedY = cstate.ballSpeedY;
+        // ballSpeedX = cstate.ballSpeedX;
+        // ballSpeedY = cstate.ballSpeedY;
     }
 
     // join
@@ -225,7 +225,7 @@ ws.onmessage = message => {
                     return Math.floor(Math.random()*(max-min+1)+min);
                 }
                 ballSpeedY = getRandomNumberBetween(-8, 8);
-                // console.log('ballSpeedY', ballSpeedY);
+                console.log('ballSpeedY', ballSpeedY);
                 
                 computerServe();
             }, 1500)
@@ -270,9 +270,11 @@ ws.onmessage = message => {
             return;
         }
         
-        // computerMovement();
+        if(!multiplayerMode) {
+            computerMovement();
+        }
     
-        // what is this for?
+        // what was i thinking when writing this?
         ballX += ballSpeedX;
         ballY += ballSpeedY;
     
@@ -332,7 +334,7 @@ ws.onmessage = message => {
         // }
 
 
-        // only send payload when multiplayerMode = true
+        // only send payload when playing multiplayer
         if(multiplayerMode) {
             // put logic to decide which player gets what paddle
             /* the paddles aren't going to move before pressing game start */
