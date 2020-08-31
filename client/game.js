@@ -22,7 +22,7 @@ var mousePos;
 // HTML elements
 let clientId = null;
 let gameId = null;
-let playerColor = null;
+let playerColor = 'blue';
 let ws = new WebSocket('ws://localhost:9090');
 const btnCreate = document.getElementById('btnCreate');
 const btnJoin = document.getElementById('btnJoin');
@@ -31,6 +31,17 @@ const divPlayers = document.getElementById('divPlayers');
 const divBoard = document.getElementById('divBoard');
 
 // wiring events
+btnCreate.addEventListener('click', e => {
+
+    const payload = {
+        'method': 'create',
+        'clientId': clientId
+    }
+
+    ws.send(JSON.stringify(payload));
+    
+})
+
 btnJoin.addEventListener('click', e => {
 
     if (gameId == null) {
@@ -46,16 +57,6 @@ btnJoin.addEventListener('click', e => {
     ws.send(JSON.stringify(payload));           
 })
 
-btnCreate.addEventListener('click', e => {
-
-    const payload = {
-        'method': 'create',
-        'clientId': clientId
-    }
-
-    ws.send(JSON.stringify(payload));
-    
-})
 // when the server sends the client a message
 ws.onmessage = message => {
     // string server sends: message.data
@@ -122,7 +123,12 @@ ws.onmessage = message => {
 
             // c.color is the personal color so this makes it dynamic
             if (c.clientId === clientId) {
-                playerColor = c.color;
+                // playerColor = c.color;
+                if (c.color === 'red') {
+                    playerColor = 'blue';
+                } else if (c.color === 'blue') {
+                    playerColor = 'red';
+                }
             }
         });
 
@@ -189,7 +195,7 @@ function moveEverything() {
         computerMovement();
     }
 
-    //? what was i thinking when writing this?
+    // incrementing puck position by its components speeds to appear speeding up
     ballX += ballSpeedX;
     ballY += ballSpeedY;
 
@@ -261,6 +267,7 @@ function moveEverything() {
             paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
         }
         
+        
         // send to the server the information that is needed to replicate the change that this event listener listened upon.
         let payload = {
             'method': 'play',
@@ -283,9 +290,10 @@ function moveEverything() {
 }
     
 function ballReset() {
-    if(player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
-        showingWinScreen = true;
-    }
+    // commenting the win screen temporarily
+    // if(player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
+    //     showingWinScreen = true;
+    // }
 
     // to reset the puck, it can't be traveling in the y-direction
     ballSpeedY = 0;
@@ -321,7 +329,6 @@ function ballReset() {
 
         ballY = paddle1Y + (PADDLE_HEIGHT / 2);
 
-        //! this is the culprit (maybe) for the weird puck mms.
         let mouseMoveBall = function(evt) {
             let mousePos = calculateMousePos(evt);
             ballY = mousePos.y;

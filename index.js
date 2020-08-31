@@ -11,7 +11,7 @@ const websocketServer = require('websocket').server;
 const httpServer = http.createServer();
 httpServer.listen(9090, () => console.log(`listening on 9090`));
 
-let color = 'red';
+let color = 'blue';
 
 // hash map clients
 const clients = {};
@@ -30,7 +30,7 @@ wsServer.on('request', request => {
     connection.on('message', message => {
         // Data that the server receives
         const result = JSON.parse(message.utf8Data);
-        // console.log('result from message connection: ', result);
+        // console.log('RESULT from message connection: ', result);
 
         // I have received a message from the client
         // User wants to create a new game
@@ -67,16 +67,15 @@ wsServer.on('request', request => {
                 // pass
             }
 
-            color = {'0': 'red', '1': 'blue'}[game.clients.length];
+            color = {'0': 'blue', '1': 'red'}[game.clients.length];
             
             game.clients.push({
                 'clientId': clientId,
                 'color': color
             });
 
-            //start the game
+            // start the multi-player game
             if (game.clients.length === 2) {
-
                 updateGameState();
             }
 
@@ -91,7 +90,7 @@ wsServer.on('request', request => {
             });
         }
 
-        // once a player moves the paddle, that info is sent to the server here to update the state and send it back to the other player.
+        // once a player moves the paddle, that info is sent to the server here to update the state and send it back to all clients.
         if (result.method === 'play') {
             const gameId = result.gameId;
             let playerColor = result.playerColor;
