@@ -98,17 +98,24 @@ wsServer.on('request', request => {
             let playerPaddle2Y = result.paddle2Y;
             let ballX = result.ballX;
             let ballY = result.ballY;
-            let ballSpeedX = result.ballSpeedX;
-            let ballSpeedY = result.ballSpeedY;
+            // let ballSpeedX = result.ballSpeedX;
+            // let ballSpeedY = result.ballSpeedY;
             let state = {};
 
             state = games[gameId].state;
             
             state.playerColor = playerColor;
-            state.ballX = ballX;
-            state.ballY = ballY;
-            state.ballSpeedX = ballSpeedX;
-            state.ballSpeedY = ballSpeedY;
+            if (playerColor === 'blue') {
+                state.ballX = ballX;
+                state.ballY = ballY;
+                // state.ballSpeedX = ballSpeedX;
+                // state.ballSpeedY = ballSpeedY;
+            } else if (playerColor === 'red') {
+                state.ballX += ballX;
+                state.ballY += ballY;
+                // state.ballSpeedX += ballSpeedX;
+                // state.ballSpeedY += ballSpeedY;
+            }
 
             // only update your own paddle position so that you don't affect the other player when the state updates.
             if (playerColor === 'blue') {

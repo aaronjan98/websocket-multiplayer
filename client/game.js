@@ -17,7 +17,9 @@ const PADDLE_HEIGHT = 90;
 
 var showingWinScreen = false;
 var multiplayerMode = false;
-var mousePos;
+// var mousePos;
+var mousePosBlue;
+var mousePosRed;
 
 // HTML elements
 let clientId = null;
@@ -76,28 +78,6 @@ ws.onmessage = message => {
         copyToClipboard(response.game.id);
     }
 
-    // update
-    if (response.method === 'update') {
-        // use information from this response from the server to update the game to match the changes that my other opponent made
-
-        let cstate = response.game;
-        // console.log('update ballX: ', cstate.ballX);
-
-        // updating paddle position for player who didn't move that paddle
-        let color = cstate.playerColor;
-        if (color === 'red') {
-            paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
-        } else if (color === 'blue') {
-            paddle2Y = cstate.paddle2Y - (PADDLE_HEIGHT/2);
-        }
-
-        // update ball position and speed
-        ballX = cstate.ballX;
-        ballY = cstate.ballY;
-        // ballSpeedX = cstate.ballSpeedX;
-        // ballSpeedY = cstate.ballSpeedY;
-    }
-
     // join
     if (response.method === 'join') {
         console.log('response when joining: ', response);
@@ -124,11 +104,6 @@ ws.onmessage = message => {
             // c.color is the personal color so this makes it dynamic
             if (c.clientId === clientId) {
                 playerColor = c.color;
-                // if (c.color === 'red') {
-                //     playerColor = 'blue';
-                // } else if (c.color === 'blue') {
-                //     playerColor = 'red';
-                // }
             }
         });
 
@@ -137,6 +112,30 @@ ws.onmessage = message => {
         \*    and the other player who just connected
          */
 
+    }
+
+    // update
+    if (response.method === 'update') {
+        console.log('updated');
+        // use information from this response from the server to update the game to match the changes that my other opponent made
+
+        let cstate = response.game;
+        console.log('response.game: ', cstate);
+
+        // updating paddle position for player who didn't move that paddle
+        let color = cstate.playerColor;
+        if (color === 'red') {
+            paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
+        } else if (color === 'blue') {
+            paddle2Y = cstate.paddle2Y - (PADDLE_HEIGHT/2);
+        }
+
+        // update ball position and speed
+        ballX = cstate.ballX;
+        ballY = cstate.ballY;
+        // drawEverything();
+        // ballSpeedX = cstate.ballSpeedX;
+        // ballSpeedY = cstate.ballSpeedY;
     }
 }
 
@@ -157,10 +156,19 @@ window.onload = function() {
 
     // canvas.addEventListener('mousedown', handleMouseClick);
 
+    //? thinking about wrapping mousemove in a condition bc the puck position is dependent on the mouse pos.
+    // or is that fine bc we're not transferring this data to the socket
     canvas.addEventListener('mousemove', function(evt) {
         let eventMousePos = calculateMousePos(evt);
-        if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
-            mousePos = eventMousePos;
+        // mousePos = eventMousePos;
+        if (playerColor === 'blue') {
+            if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
+                mousePosBlue = eventMousePos;
+            }
+        } else if (playerColor === 'red') {
+            if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
+                mousePosRed = eventMousePos;
+            }
         }
     });
 
@@ -173,17 +181,21 @@ window.onload = function() {
     };
 
     let shootBall = function(evt) {
-        ballSpeedX = -7;
+        // ballSpeedX = -7;
+        ballSpeedX = -3;
         function getRandomNumberBetween(min,max){
             return Math.floor(Math.random()*(max-min+1)+min);
         }
-        ballSpeedY = getRandomNumberBetween(-8, 8);
+        // ballSpeedY = getRandomNumberBetween(-8, 8);
+        ballSpeedY = 0;
         canvas.removeEventListener('mousemove', puckResetPosition);
         canvas.removeEventListener('click', shootBall);
     };
     
-    canvas.addEventListener('click', shootBall);
-    canvas.addEventListener('mousemove', puckResetPosition);
+    if (playerColor === 'blue') {
+        canvas.addEventListener('click', shootBall);
+        canvas.addEventListener('mousemove', puckResetPosition);
+    }
 }
 
 function moveEverything() {
@@ -258,34 +270,50 @@ function moveEverything() {
     //* only send payload when playing multiplayer
     if(multiplayerMode) {
         
-        if(!mousePos) return;
+        // if(!mousePos) return;
         
         // put logic to decide which player gets what paddle
         if (playerColor === 'blue') {
-            paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
+            paddle1Y = mousePosBlue.y - (PADDLE_HEIGHT/2);
         } else if (playerColor === 'red') {
-            paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
+            paddle2Y = mousePosRed.y - (PADDLE_HEIGHT/2);
         }
         
-        
-        // send to the server the information that is needed to replicate the change that this event listener listened upon.
-        let payload = {
-            'method': 'play',
-            'clientId': clientId,
-            'gameId': gameId,
-            'playerColor': playerColor,
-            'paddle1Y': paddle1Y,
-            'paddle2Y': paddle2Y,
-            'ballX': ballX,
-            'ballY': ballY,
-            'ballSpeedX': ballSpeedX,
-            'ballSpeedY': ballSpeedY
+        if (playerColor === 'blue') {
+            // send to the server the information that is needed to replicate the change that this event listener listened upon.
+            let payload = {
+                'method': 'play',
+                'clientId': clientId,
+                'gameId': gameId,
+                'playerColor': playerColor,
+                'paddle1Y': paddle1Y,
+                'paddle2Y': paddle2Y,
+                'ballX': ballX,
+                'ballY': ballY,
+                'ballSpeedX': ballSpeedX,
+                'ballSpeedY': ballSpeedY
+            }
+            
+            ws.send(JSON.stringify(payload));
+        } else if (playerColor === 'red') {
+            let payload = {
+                'method': 'play',
+                'clientId': clientId,
+                'gameId': gameId,
+                'playerColor': playerColor,
+                'paddle1Y': paddle1Y,
+                'paddle2Y': paddle2Y,
+                'ballX': 0,
+                'ballY': 0,
+                'ballSpeedX': 0,
+                'ballSpeedY': 0
+            }
+            
+            ws.send(JSON.stringify(payload));            
         }
-        
-        ws.send(JSON.stringify(payload));
     } else {
         // if not multiplayer, the person is always going to play player1
-        paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
+        paddle1Y = mousePosBlue.y - (PADDLE_HEIGHT/2);
     }
 }
     
@@ -308,7 +336,8 @@ function ballReset() {
         };
 
         let computerServe = function(evt) {
-            ballSpeedX = 7;
+            // ballSpeedX = 7;
+            ballSpeedX = 3;
         };
         
         positionServe();
@@ -318,7 +347,8 @@ function ballReset() {
             function getRandomNumberBetween(min,max){
                 return Math.floor(Math.random()*(max-min+1)+min);
             }
-            ballSpeedY = getRandomNumberBetween(-8, 8);
+            // ballSpeedY = getRandomNumberBetween(-8, 8);
+            ballSpeedY = 0;
             
             computerServe();
         }, 1500)
@@ -330,22 +360,26 @@ function ballReset() {
         ballY = paddle1Y + (PADDLE_HEIGHT / 2);
 
         let mouseMoveBall = function(evt) {
-            let mousePos = calculateMousePos(evt);
-            ballY = mousePos.y;
+            let serveMousePos = calculateMousePos(evt);
+            ballY = serveMousePos.y;
         };
 
         let shootBall = function(evt) {
-            ballSpeedX = -7;
+            // ballSpeedX = -7;
+            ballSpeedX = -3;
             function getRandomNumberBetween(min,max){
                 return Math.floor(Math.random()*(max-min+1)+min);
             }
-            ballSpeedY = getRandomNumberBetween(-8, 8);
+            // ballSpeedY = getRandomNumberBetween(-8, 8);
+            ballSpeedY = 0;
             canvas.removeEventListener('mousemove', mouseMoveBall);
             canvas.removeEventListener('click', shootBall);
         };
         
-        canvas.addEventListener('click', shootBall);
-        canvas.addEventListener('mousemove', mouseMoveBall);
+        if (playerColor === 'blue') {
+            canvas.addEventListener('click', shootBall);
+            canvas.addEventListener('mousemove', mouseMoveBall);
+        }
     }
 }
 
@@ -383,9 +417,11 @@ function drawNet() {
         colorRect(canvas.width/2-1, i, 4, 20, 'pink');
     }
 }
-    
+
+//* this fxn is continously called, I need to draw the puck for both clients ....
 function drawEverything() {
-    //blanks the screen black
+    console.log('drew');
+    // blanks the screen black
     colorRect(0, 0, canvas.width, canvas.height, 'black');
     
     // blacks the screen at the end of the game and tells who won
