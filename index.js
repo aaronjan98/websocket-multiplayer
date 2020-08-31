@@ -111,10 +111,10 @@ wsServer.on('request', request => {
             state.ballSpeedY = ballSpeedY;
 
             // only update your own paddle position so that you don't affect the other player when the state updates.
-            if (playerColor === 'red') {
+            if (playerColor === 'blue') {
                 // not sure if it should be state['paddle1Y'] with the quotes
                 state.paddle1Y = playerPaddle1Y+45;
-            } else if (playerColor === 'blue') {
+            } else if (playerColor === 'red') {
                 state.paddle2Y = playerPaddle2Y+45;
             }
 

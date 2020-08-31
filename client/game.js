@@ -123,12 +123,12 @@ ws.onmessage = message => {
 
             // c.color is the personal color so this makes it dynamic
             if (c.clientId === clientId) {
-                // playerColor = c.color;
-                if (c.color === 'red') {
-                    playerColor = 'blue';
-                } else if (c.color === 'blue') {
-                    playerColor = 'red';
-                }
+                playerColor = c.color;
+                // if (c.color === 'red') {
+                //     playerColor = 'blue';
+                // } else if (c.color === 'blue') {
+                //     playerColor = 'red';
+                // }
             }
         });
 
@@ -261,9 +261,9 @@ function moveEverything() {
         if(!mousePos) return;
         
         // put logic to decide which player gets what paddle
-        if (playerColor === 'red') {
+        if (playerColor === 'blue') {
             paddle1Y = mousePos.y - (PADDLE_HEIGHT/2);
-        } else if (playerColor === 'blue') {
+        } else if (playerColor === 'red') {
             paddle2Y = mousePos.y - (PADDLE_HEIGHT/2);
         }
         
