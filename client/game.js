@@ -80,7 +80,8 @@ ws.onmessage = message => {
 
     // join
     if (response.method === 'join') {
-        console.log('response when joining: ', response);
+        // debugger;
+        // console.log('response when joining: ', response);
         const game = response.game;
 
         // doing this to prevent premature requests of update method
@@ -116,11 +117,11 @@ ws.onmessage = message => {
 
     // update
     if (response.method === 'update') {
-        console.log('updated');
+        // console.log('updated');
         // use information from this response from the server to update the game to match the changes that my other opponent made
 
         let cstate = response.game;
-        console.log('response.game: ', cstate);
+        // console.log('response.game: ', cstate);
 
         // updating paddle position for player who didn't move that paddle
         let color = cstate.playerColor;
@@ -148,11 +149,14 @@ window.onload = function() {
     canvasContext.fillStyle = 'white';
     canvasContext.font = "30px Arial";
 
+    console.log('WINDOW');
+
     var framesPerSecond = 60;
     setInterval(function() {
         moveEverything();
         drawEverything();
     }, 1000 / framesPerSecond );
+    console.log('after onload');
 
     // canvas.addEventListener('mousedown', handleMouseClick);
 
@@ -177,7 +181,8 @@ window.onload = function() {
 
     // calibrating ballY position
     let puckResetPosition = function(evt) {
-        ballY = paddle1Y + PADDLE_HEIGHT / 2;
+        // ballY = paddle1Y + PADDLE_HEIGHT / 2;
+        ballY = mousePosBlue.y;
     };
 
     let shootBall = function(evt) {
@@ -207,9 +212,22 @@ function moveEverything() {
         computerMovement();
     }
 
+    function ballMmBeforeServe() {
+        if (playerColor === 'blue') {
+            ballReset();
+        }
+    }
+
+    if (ballSpeedX === 0) {
+        ballMmBeforeServe();
+    }
+
     // incrementing puck position by its components speeds to appear speeding up
-    ballX += ballSpeedX;
-    ballY += ballSpeedY;
+    //* doesn't seem to make a difference if I leave out the red player from updating the puck pos.
+    if(playerColor === 'blue') {
+        ballX += ballSpeedX;
+        ballY += ballSpeedY;
+    }
 
     //adjust the ball bounce from the paddles
     if (ballX <= (PADDLE_THICKNESS + 15)) {
@@ -269,7 +287,7 @@ function moveEverything() {
 
     //* only send payload when playing multiplayer
     if(multiplayerMode) {
-        
+        //? can i delete this? if there is not a valid mousePos, what happens?
         // if(!mousePos) return;
         
         // put logic to decide which player gets what paddle
@@ -360,8 +378,9 @@ function ballReset() {
         ballY = paddle1Y + (PADDLE_HEIGHT / 2);
 
         let mouseMoveBall = function(evt) {
-            let serveMousePos = calculateMousePos(evt);
-            ballY = serveMousePos.y;
+            // let serveMousePos = calculateMousePos(evt);
+            // ballY = serveMousePos.y;
+            ballY = mousePosBlue.y;
         };
 
         let shootBall = function(evt) {
@@ -420,7 +439,6 @@ function drawNet() {
 
 //* this fxn is continously called, I need to draw the puck for both clients ....
 function drawEverything() {
-    console.log('drew');
     // blanks the screen black
     colorRect(0, 0, canvas.width, canvas.height, 'black');
     
