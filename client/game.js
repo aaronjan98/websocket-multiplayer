@@ -5,6 +5,8 @@ let ballY = 295;
 let ballSpeedX = 0;
 let ballSpeedY = 0;
 
+let counter = 0;
+
 var player1Score = 0;
 var player2Score = 0;
 const WINNING_SCORE = 2;
@@ -114,7 +116,6 @@ ws.onmessage = message => {
         \*    a page, to a black screen w/ your name
         \*    and the other player who just connected
          */
-
     }
 
     // update
@@ -182,6 +183,7 @@ window.onload = function() {
     let puckResetPosition = function(evt) {
         // ballY = paddle1Y + PADDLE_HEIGHT / 2;
         ballY = mousePosBlue.y;
+        console.log('here');
     };
 
     let shootBall = function(evt) {
@@ -211,24 +213,33 @@ function moveEverything() {
         computerMovement();
     }
 
-    // if (multiPlayerFirstServe) {
-    //! need to change this bc the blue Player always serves
-    if (multiplayerMode && ballSpeedX === 0) {
-        if (playerColor === 'blue') {
-            ballReset();
-        }
-    }
+    // console.log(ballX, ballY, ballSpeedX, ballSpeedY);
+
+
+
+    // this function does nothing
+    // function noop() {};
+
+    // function multiPlayerFirstServe() {
+    //     multiPlayerFirstServe = noop;
+        
+    //     if (playerColor === 'blue') {
+    //         ballReset();
+    //     }
+    // };
+
+    // if (multiplayerMode && ballSpeedX === 0) {
+    //     multiPlayerFirstServe();
+    // }
 
     // incrementing puck position by its components speeds to appear speeding up
     //* doesn't seem to make a difference if I leave out the red player from updating the puck pos.
-    if(playerColor === 'blue') {
-        ballX += ballSpeedX;
-        ballY += ballSpeedY;
-    }
+    ballX += ballSpeedX;
+    ballY += ballSpeedY;
 
     //adjust the ball bounce from the paddles
     // left side of the canvas
-    if (ballX <= (PADDLE_THICKNESS + 15)) {
+    if (ballX < (PADDLE_THICKNESS + 15)) {
         // inside paddle
         if (ballY > (paddle1Y-20) && ballY < paddle1Y+PADDLE_HEIGHT+20) {
             
@@ -240,14 +251,15 @@ function moveEverything() {
 
             var deltaY = ballY - (paddle1Y+PADDLE_HEIGHT/2);
             ballSpeedY = deltaY * 0.15;
-        // outside of paddle
+        // outside of paddle, red scores
         } else {
             player2Score++;
+            // debugger;
             // only one client has to invoke this fxn
             ballReset();
         }
     } // right side of the canvas
-    else if (ballX >= (canvas.width - (PADDLE_THICKNESS + 15))) {
+    else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) {
         if(ballY > (paddle2Y-20) && ballY < paddle2Y+PADDLE_HEIGHT+20) {
             ballSpeedX = -ballSpeedX;
 
@@ -296,6 +308,17 @@ function moveEverything() {
             paddle1Y = mousePosBlue.y - (PADDLE_HEIGHT/2);
         } else if (playerColor === 'red') {
             paddle2Y = mousePosRed.y - (PADDLE_HEIGHT/2);
+        }
+
+        // ! need to change this bc the blue Player always serves
+        if (ballSpeedX === 0 && ballX < (canvas.width / 2)) {
+            debugger;
+            if (playerColor === 'blue') {
+                console.log('HERE');
+                ballReset();
+            }
+        } else if (ballSpeedX === 0 && ballX > (canvas.width / 2)) {
+            console.log('hi');
         }
         
         if (playerColor === 'blue') {
@@ -346,14 +369,15 @@ function ballReset() {
     ballSpeedY = 0;
     
     // to reset the puck you have to know which direction the point made it to, which you can tell with the negative and positive x-directional speed of the puck.
-    if(ballSpeedX < 0){ // paddle 2
+    if(ballSpeedX < 0){ // paddle 2 scores
+        console.log('red scored! ', counter);
         ballSpeedX = 0;
         ballX = canvas.width - (PADDLE_THICKNESS + 30);
 
         // after the robo scores, the puck should reset in the middle
-        if (!multiplayerMode) {
-            ballY = 300;
-        }
+        // if (!multiplayerMode) {
+        // }
+        ballY = 300;
 
         let computerServe = function(evt) {
             // ballSpeedX = 7;
@@ -361,47 +385,70 @@ function ballReset() {
         };
         
         // only have robo serve when single player
-        if (multiplayerMode) {
-            ballY = paddle2Y + (PADDLE_HEIGHT / 2);
+        // if (multiplayerMode) {
+        //     // console.log('here');
+        //     ballY = paddle2Y + (PADDLE_HEIGHT / 2);
             
             // only player2 can have an event handler on the puck when they won the turn
-            if (playerColor === 'red') {
-                let mouseMoveBall = function(evt) {
-                    let mousePos = calculateMousePos(evt);
-                    ballY = mousePos.y;
-                };
+            //! player red is not ever going to be here
+        //     if (playerColor === 'blue') {
+        //         setTimeout(() => {
+        //             function getRandomNumberBetween(min,max){
+        //                 return Math.floor(Math.random()*(max-min+1)+min);
+        //             }
+        //             // ballSpeedY = getRandomNumberBetween(-8, 8);
+        //             ballSpeedY = 0;
+                    
+        //             ballSpeedX = -3;
+        //             return;
+        //         }, 1500);
+        //         let mouseMoveBall = function(evt) {
+        //             // let mousePos = calculateMousePos(evt);
+        //             // ballY = mousePos.y;
+        //             ballY = mousePosRed.y;
+        //         };
                 
-                let shootBall = function(evt) {
-                    // multiPlayerFirstServe = false;
-                    // ballSpeedX = 7;
-                    ballSpeedX = 3;
-                    function getRandomNumberBetween(min,max){
-                        return Math.floor(Math.random()*(max-min+1)+min);
-                    }
-                    // ballSpeedY = getRandomNumberBetween(-8, 8);
-                    ballSpeedY = 0;
+        //         let shootBall = function(evt) {
+        //             // multiPlayerFirstServe = false;
+        //             // ballSpeedX = 7;
+        //             ballSpeedX = 3;
+        //             function getRandomNumberBetween(min,max){
+        //                 return Math.floor(Math.random()*(max-min+1)+min);
+        //             }
+        //             // ballSpeedY = getRandomNumberBetween(-8, 8);
+        //             ballSpeedY = 0;
 
-                    canvas.removeEventListener('mousemove', mouseMoveBall);
-                    canvas.removeEventListener('click', shootBall);
-                };
+        //             canvas.removeEventListener('mousemove', mouseMoveBall);
+        //             canvas.removeEventListener('click', shootBall);
+        //         };
                 
-                canvas.addEventListener('click', shootBall);
-                canvas.addEventListener('mousemove', mouseMoveBall);
+        //         canvas.addEventListener('click', shootBall);
+        //         canvas.addEventListener('mousemove', mouseMoveBall);
+        //     }
+        // } else if (!multiplayerMode) {
+        //     setTimeout(() => {
+        //         function getRandomNumberBetween(min,max){
+        //             return Math.floor(Math.random()*(max-min+1)+min);
+        //         }
+        //         // ballSpeedY = getRandomNumberBetween(-8, 8);
+        //         ballSpeedY = 0;
+                
+        //         computerServe();
+        //     }, 1500);
+        // }
+        setTimeout(() => {
+            function getRandomNumberBetween(min,max){
+                return Math.floor(Math.random()*(max-min+1)+min);
             }
-        } else if (!multiplayerMode) {
-            setTimeout(() => {
-                function getRandomNumberBetween(min,max){
-                    return Math.floor(Math.random()*(max-min+1)+min);
-                }
-                // ballSpeedY = getRandomNumberBetween(-8, 8);
-                ballSpeedY = 0;
-                
-                computerServe();
-            }, 1500);
-        }
+            // ballSpeedY = getRandomNumberBetween(-8, 8);
+            ballSpeedY = 0;
+            
+            computerServe();
+        }, 1500);
 
     // hold the puck until you click to serve
-    } else if (ballSpeedX >= 0){ // paddle 1
+    } else if (ballSpeedX >= 0){ // paddle 1 scored
+        // console.log('blue scored ', counter);
         ballSpeedX = 0;
         ballX = (25 + PADDLE_THICKNESS);
 
