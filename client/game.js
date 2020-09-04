@@ -114,15 +114,13 @@ ws.onmessage = message => {
         // console.log('response.game: ', cstate);
 
         // updating paddle position for player who didn't move that paddle
-        let color = cstate.playerColor;
-        if (color === 'red') {
-            paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
-        } else if (color === 'blue') {
-        }
-        
         if (playerColor === 'blue') {
             mousePosRed = cstate.mousePosRed;
             paddle2Y = cstate.paddle2Y - (PADDLE_HEIGHT/2);
+        } else if (playerColor === 'red') {
+            paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
+            redIsServing = cstate.redIsServing;
+
         }
 
         // update ball position and speed
@@ -159,14 +157,10 @@ window.onload = function() {
             if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
                 mousePosBlue = eventMousePos;
             }
-            // console.log('mousePosBlue: ', mousePosBlue);
-            // console.log('mousePosRed: undefined', mousePosRed);
         } else if (playerColor === 'red') {
             if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
                 mousePosRed = eventMousePos;
             }
-            // console.log('mousePosBlue: undefined', mousePosBlue);
-            // console.log('mousePosRed: ', mousePosRed);
         }
     });
 
@@ -284,12 +278,6 @@ function moveEverything() {
         }
     }
 
-    // red player is serving
-    // if (multiplayerMode && ballSpeedX === 0 && ballX > (canvas.width / 2)) {
-    //     console.log('hit');
-    //     redIsServing = true;
-    // }
-
     if(multiplayerMode) {
         if (playerColor === 'blue') {
             // send to the server the information that is needed to replicate the change that this event listener listened upon.
@@ -304,7 +292,8 @@ function moveEverything() {
                 'ballY': ballY,
                 'ballSpeedX': ballSpeedX,
                 'ballSpeedY': ballSpeedY,
-                'mousePosBlue': mousePosBlue
+                'mousePosBlue': mousePosBlue,
+                'redIsServing': redIsServing
             }
             
             ws.send(JSON.stringify(payload));
@@ -491,11 +480,10 @@ function drawEverything() {
     // the puck's position will be updated above when this information is transferred through update method
     // only the logic dealing with changing the puck's position and velocty should be conditioned to only execute with one player
     if (redIsServing) {
-        colorCircle(ballX, mousePosRed.y, 10, 'yellow');
-    } else {
-        console.log('else');
-        colorCircle(ballX, ballY, 10, 'yellow');
+        ballY = mousePosRed.y;
     }
+
+    colorCircle(ballX, ballY, 10, 'yellow');
 
     //left player paddle
     colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , 'blue');

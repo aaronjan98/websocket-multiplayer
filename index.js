@@ -111,6 +111,7 @@ wsServer.on('request', request => {
             let state = {};
 
             state = games[gameId].state;
+            state.redIsServing = result.redIsServing;
             
             state.playerColor = playerColor;
             if (playerColor === 'blue') {
