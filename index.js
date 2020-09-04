@@ -21,6 +21,14 @@ const wsServer = new websocketServer({
     'httpServer': httpServer
 });
 
+// websocketServer.broadcast = function(data, sender) {
+//     websocketServer.clients.forEach(function(client) {
+//       if (client !== sender) {
+//         client.send(data);
+//       }
+//     })
+// }
+
 wsServer.on('request', request => {
     // connect
     const connection = request.accept(null, request.origin);
@@ -111,15 +119,16 @@ wsServer.on('request', request => {
                 // state.ballSpeedX = ballSpeedX;
                 // state.ballSpeedY = ballSpeedY;
             } else if (playerColor === 'red') {
-                state.ballX += ballX;
-                state.ballY += ballY;
+                state.ballX += 0;
+                state.ballY += 0;
+                // webSocketServer.broadcast(result.mousePosRed, ws);
+                state.mousePosRed = result.mousePosRed;
                 // state.ballSpeedX += ballSpeedX;
                 // state.ballSpeedY += ballSpeedY;
             }
 
             // only update your own paddle position so that you don't affect the other player when the state updates.
             if (playerColor === 'blue') {
-                // not sure if it should be state['paddle1Y'] with the quotes
                 state.paddle1Y = playerPaddle1Y+45;
             } else if (playerColor === 'red') {
                 state.paddle2Y = playerPaddle2Y+45;
