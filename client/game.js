@@ -144,10 +144,10 @@ window.onload = function() {
         event.stopPropagation();
         console.log('clicked');
         // canvas.removeEventListener('click', log);
+        redIsServing = false;
     }
 
     setInterval(function() {
-        console.log('hi');
         moveEverything();
         drawEverything();
 
@@ -158,8 +158,6 @@ window.onload = function() {
 
     // canvas.addEventListener('mousedown', handleMouseClick);
 
-    //? thinking about wrapping mousemove in a condition bc the puck position is dependent on the mouse pos.
-    // or is that fine bc we're not transferring this data to the socket
     canvas.addEventListener('mousemove', function(evt) {
         let eventMousePos = calculateMousePos(evt);
         // mousePos = eventMousePos;
@@ -200,7 +198,7 @@ window.onload = function() {
         canvas.addEventListener('click', shootBall);
         canvas.addEventListener('mousemove', puckResetPosition);
     }
-}
+} // window onload
 
 function moveEverything() {
     if(showingWinScreen) {
@@ -258,28 +256,27 @@ function moveEverything() {
         }
 
         // puck changes direction when bumping up the walls
-        if(ballY < 0){
+        if (ballY < 0) {
             ballSpeedY = -ballSpeedY;
         }
-        if(ballY > canvas.height) {
+        if (ballY > canvas.height) {
             ballSpeedY = -ballSpeedY;
         }
 
         // as the puck increase speed in the y-direction, the computer paddle increase mm.
-        if(Math.abs(ballSpeedY) > 6) {
+        if (Math.abs(ballSpeedY) > 6) {
             paddleMovement = 6;
-        }else if(Math.abs(ballSpeedY) > 4 && Math.abs(ballSpeedY) <= 6){
+        } else if (Math.abs(ballSpeedY) > 4 && Math.abs(ballSpeedY) <= 6) {
             paddleMovement = 6;
-        }else if(Math.abs(ballSpeedY) > 3 && Math.abs(ballSpeedY) <= 4){
+        } else if (Math.abs(ballSpeedY) > 3 && Math.abs(ballSpeedY) <= 4) {
             paddleMovement = 5.5;
-        }else if(Math.abs(ballSpeedY) >= 1 && Math.abs(ballSpeedY) <= 3){
+        } else if (Math.abs(ballSpeedY) >= 1 && Math.abs(ballSpeedY) <= 3) {
             paddleMovement = 5;
-        }else if(Math.abs(ballSpeedY) > 0 && Math.abs(ballSpeedY) < 1){
+        } else if (Math.abs(ballSpeedY) > 0 && Math.abs(ballSpeedY) < 1) {
             paddleMovement = 4;
-        }else if(Math.abs(ballSpeedY) === 0){
+        } else if (Math.abs(ballSpeedY) === 0){
             paddleMovement = 3.5;
-        }
-        else if(Math.abs(ballSpeedY) == 0 && Math.abs(ballSpeedX) == 0){
+        } else if (Math.abs(ballSpeedY) == 0 && Math.abs(ballSpeedX) == 0) {
             paddleMovement = 0;
         }
 
@@ -315,7 +312,8 @@ function moveEverything() {
                 'gameId': gameId,
                 'playerColor': playerColor,
                 'paddle2Y': paddle2Y,
-                'mousePosRed': mousePosRed
+                'mousePosRed': mousePosRed,
+                'redIsServing': redIsServing
             }
             
             ws.send(JSON.stringify(payload));            
@@ -324,7 +322,7 @@ function moveEverything() {
         // if not multiplayer, the person is always going to play player1
         paddle1Y = mousePosBlue.y - (PADDLE_HEIGHT/2);
     }
-}
+} // moveEverything()
     
 function ballReset() {
     // commenting the win screen temporarily
@@ -428,44 +426,8 @@ function ballReset() {
             canvas.addEventListener('mousemove', mouseMoveBall);
         }
     }
-}
+} // ballReset()
 
-function calculateMousePos(evt) {
-    var rect = canvas.getBoundingClientRect();
-    var root = document.documentElement;
-    var mouseX = evt.clientX - rect.left - root.scrollLeft;
-    var mouseY = evt.clientY - rect.top - root.scrollTop;
-    return {
-        x: mouseX,
-        y: mouseY
-    };
-}
-
-// while on the black screen when you receive the scores, this fxn allows the player to click to restart the game
-function handleMouseClick(evt) {
-    if(showingWinScreen) {
-        player1Score = 0;
-        player2Score = 0;
-        showingWinScreen = false;
-    }
-}
-    
-function computerMovement() {
-    var paddle2YCenter = paddle2Y + (PADDLE_HEIGHT / 2);
-    if(paddle2YCenter < ballY) {
-        paddle2Y += paddleMovement;
-    }else if (paddle2YCenter > ballY){
-        paddle2Y -= paddleMovement;
-    }
-}
-    
-function drawNet() {
-    for(let i = 0; i < canvas.height; i+=40) {
-        colorRect(canvas.width/2-1, i, 4, 20, 'pink');
-    }
-}
-
-//* this fxn is continously called, I need to draw the puck for both clients ....
 function drawEverything() {
     // blanks the screen black
     colorRect(0, 0, canvas.width, canvas.height, 'black');
@@ -506,6 +468,41 @@ function drawEverything() {
     canvasContext.fillText(player1Score, 100, 100);
     canvasContext.fillText(player2Score, canvas.width - 100, 100);
 
+} // drawEverything()
+
+function calculateMousePos(evt) {
+    var rect = canvas.getBoundingClientRect();
+    var root = document.documentElement;
+    var mouseX = evt.clientX - rect.left - root.scrollLeft;
+    var mouseY = evt.clientY - rect.top - root.scrollTop;
+    return {
+        x: mouseX,
+        y: mouseY
+    };
+}
+
+// while on the black screen when you receive the scores, this fxn allows the player to click to restart the game
+function handleMouseClick(evt) {
+    if(showingWinScreen) {
+        player1Score = 0;
+        player2Score = 0;
+        showingWinScreen = false;
+    }
+}
+    
+function computerMovement() {
+    var paddle2YCenter = paddle2Y + (PADDLE_HEIGHT / 2);
+    if(paddle2YCenter < ballY) {
+        paddle2Y += paddleMovement;
+    }else if (paddle2YCenter > ballY){
+        paddle2Y -= paddleMovement;
+    }
+}
+    
+function drawNet() {
+    for(let i = 0; i < canvas.height; i+=40) {
+        colorRect(canvas.width/2-1, i, 4, 20, 'pink');
+    }
 }
 
 function colorRect(leftX, topY, width, height, drawColor) {
