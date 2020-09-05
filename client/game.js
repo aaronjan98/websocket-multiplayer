@@ -120,7 +120,6 @@ ws.onmessage = message => {
         } else if (playerColor === 'red') {
             paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
             redIsServing = cstate.redIsServing;
-
         }
 
         // update ball position and speed
@@ -141,9 +140,20 @@ window.onload = function() {
     canvasContext.font = "30px Arial";
 
     var framesPerSecond = 60;
+    function log(event) {
+        event.stopPropagation();
+        console.log('clicked');
+        // canvas.removeEventListener('click', log);
+    }
+
     setInterval(function() {
+        console.log('hi');
         moveEverything();
         drawEverything();
+
+        if (playerColor === 'red') {
+            canvas.addEventListener('click', log);
+        };
     }, 1000 / framesPerSecond );
 
     // canvas.addEventListener('mousedown', handleMouseClick);
@@ -174,6 +184,7 @@ window.onload = function() {
     };
 
     let shootBall = function(evt) {
+        console.log('shootball');
         // ballSpeedX = -7;
         ballSpeedX = -3;
         function getRandomNumberBetween(min,max){
