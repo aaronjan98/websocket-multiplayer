@@ -106,7 +106,7 @@ wsServer.on('request', request => {
             let playerPaddle2Y = result.paddle2Y;
             let ballX = result.ballX;
             let ballY = result.ballY;
-            // let ballSpeedX = result.ballSpeedX;
+            let ballSpeedX = result.ballSpeedX;
             // let ballSpeedY = result.ballSpeedY;
             let state = {};
 
@@ -114,18 +114,15 @@ wsServer.on('request', request => {
             state.redIsServing = result.redIsServing;
             
             state.playerColor = playerColor;
+            
+            state.ballSpeedX = ballSpeedX;
+            
             if (playerColor === 'blue') {
                 state.ballX = ballX;
                 state.ballY = ballY;
-                // state.ballSpeedX = ballSpeedX;
                 // state.ballSpeedY = ballSpeedY;
             } else if (playerColor === 'red') {
-                state.ballX += 0;
-                state.ballY += 0;
-                // webSocketServer.broadcast(result.mousePosRed, ws);
                 state.mousePosRed = result.mousePosRed;
-                // state.ballSpeedX += ballSpeedX;
-                // state.ballSpeedY += ballSpeedY;
             }
 
             // only update your own paddle position so that you don't affect the other player when the state updates.
@@ -136,7 +133,6 @@ wsServer.on('request', request => {
             }
 
             games[gameId].state = state;
-            // console.log('GAMES: ', games);
         }
     })
 

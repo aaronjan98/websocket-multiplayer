@@ -18,6 +18,7 @@ const PADDLE_HEIGHT = 90;
 var showingWinScreen = false;
 var multiplayerMode = false;
 var redIsServing = false;
+var sendBallSpeedX = false;
 var mousePosBlue;
 var mousePosRed;
 
@@ -117,15 +118,18 @@ ws.onmessage = message => {
         if (playerColor === 'blue') {
             mousePosRed = cstate.mousePosRed;
             paddle2Y = cstate.paddle2Y - (PADDLE_HEIGHT/2);
+            // if (redIsServing) {
+            //     ballSpeedX = cstate.ballSpeedX;
+            // }
         } else if (playerColor === 'red') {
             paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
             redIsServing = cstate.redIsServing;
+            ballSpeedX = cstate.ballSpeedX;
         }
 
         // update ball position and speed
         ballX = cstate.ballX;
         ballY = cstate.ballY;
-        // ballSpeedX = cstate.ballSpeedX;
         // ballSpeedY = cstate.ballSpeedY;
     }
 }
@@ -143,15 +147,14 @@ window.onload = function() {
     function log(event) {
         event.stopPropagation();
         console.log('clicked');
-        // canvas.removeEventListener('click', log);
-        redIsServing = false;
+        sendBallSpeedX = true;
     }
 
     setInterval(function() {
         moveEverything();
         drawEverything();
 
-        if (playerColor === 'red') {
+        if (playerColor === 'red' && redIsServing) {
             canvas.addEventListener('click', log);
         };
     }, 1000 / framesPerSecond );
@@ -205,7 +208,7 @@ function moveEverything() {
         return;
     }
 
-    // put logic to decide which player gets what paddle
+    // put logic to decide which player controls what paddle
     if (playerColor === 'blue') {
         paddle1Y = mousePosBlue.y - (PADDLE_HEIGHT/2);
     } else if (playerColor === 'red') {
@@ -216,13 +219,14 @@ function moveEverything() {
         computerMovement();
     }
 
+    
+    // incrementing puck position by its components speeds to appear speeding up
+    ballX += ballSpeedX;
+    ballY += ballSpeedY;
+
+    console.log(`${playerColor}: `, ballSpeedX);
+    
     if (playerColor === 'blue') {
-
-        // incrementing puck position by its components speeds to appear speeding up
-        //* doesn't seem to make a difference if I leave out the red player from updating the puck pos.
-        ballX += ballSpeedX;
-        ballY += ballSpeedY;
-
         //adjust the ball bounce from the paddles
         // left side of the canvas
         if (ballX < (PADDLE_THICKNESS + 15)) {
@@ -306,17 +310,35 @@ function moveEverything() {
             
             ws.send(JSON.stringify(payload));
         } else if (playerColor === 'red') {
-            let payload = {
-                'method': 'play',
-                'clientId': clientId,
-                'gameId': gameId,
-                'playerColor': playerColor,
-                'paddle2Y': paddle2Y,
-                'mousePosRed': mousePosRed,
-                'redIsServing': redIsServing
+            if (sendBallSpeedX) {
+                let payload = {
+                    'method': 'play',
+                    'clientId': clientId,
+                    'gameId': gameId,
+                    'playerColor': playerColor,
+                    'ballSpeedX': 3,
+                    'paddle2Y': paddle2Y,
+                    'mousePosRed': mousePosRed,
+                    'redIsServing': redIsServing
+                }
+
+                ws.send(JSON.stringify(payload)); 
+                sendBallSpeedX = false;
+                redIsServing = false;           
+            } else {
+                let payload = {
+                    'method': 'play',
+                    'clientId': clientId,
+                    'gameId': gameId,
+                    'playerColor': playerColor,
+                    'ballSpeedX': 0,
+                    'paddle2Y': paddle2Y,
+                    'mousePosRed': mousePosRed,
+                    'redIsServing': redIsServing
+                }
+                
+                ws.send(JSON.stringify(payload));            
             }
-            
-            ws.send(JSON.stringify(payload));            
         }
     } else {
         // if not multiplayer, the person is always going to play player1
