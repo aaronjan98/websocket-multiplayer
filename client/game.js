@@ -121,6 +121,8 @@ ws.onmessage = message => {
         } else if (playerColor === 'red') {
             paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
             ballSpeedX = cstate.ballSpeedX;
+            player1Score = cstate.player1Score;
+            player2Score = cstate.player2Score;
         }
         redIsServing = cstate.redIsServing;
 
@@ -132,8 +134,6 @@ ws.onmessage = message => {
 
 /****************** Render the entire canvas below ******************/
 
-var count = 0
-
 // play
 window.onload = function() {
     canvas = document.getElementById('gameCanvas');
@@ -142,6 +142,7 @@ window.onload = function() {
     canvasContext.font = "30px Arial";
 
     var framesPerSecond = 60;
+
     function redServes(evt) {
         sendBallSpeedX = true;
         canvas.removeEventListener('click', redServes);
@@ -160,7 +161,7 @@ window.onload = function() {
 
     canvas.addEventListener('mousemove', function(evt) {
         let eventMousePos = calculateMousePos(evt);
-        // mousePos = eventMousePos;
+
         if (playerColor === 'blue') {
             if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
                 mousePosBlue = eventMousePos;
@@ -268,21 +269,23 @@ function moveEverything() {
             ballSpeedY = -ballSpeedY;
         }
 
-        // as the puck increase speed in the y-direction, the computer paddle increase mm.
-        if (Math.abs(ballSpeedY) > 6) {
-            paddleMovement = 6;
-        } else if (Math.abs(ballSpeedY) > 4 && Math.abs(ballSpeedY) <= 6) {
-            paddleMovement = 6;
-        } else if (Math.abs(ballSpeedY) > 3 && Math.abs(ballSpeedY) <= 4) {
-            paddleMovement = 5.5;
-        } else if (Math.abs(ballSpeedY) >= 1 && Math.abs(ballSpeedY) <= 3) {
-            paddleMovement = 5;
-        } else if (Math.abs(ballSpeedY) > 0 && Math.abs(ballSpeedY) < 1) {
-            paddleMovement = 4;
-        } else if (Math.abs(ballSpeedY) === 0){
-            paddleMovement = 3.5;
-        } else if (Math.abs(ballSpeedY) == 0 && Math.abs(ballSpeedX) == 0) {
-            paddleMovement = 0;
+        if (!multiplayerMode) {
+            // as the puck increase speed in the y-direction, the computer paddle increase mm.
+            if (Math.abs(ballSpeedY) > 6) {
+                paddleMovement = 6;
+            } else if (Math.abs(ballSpeedY) > 4 && Math.abs(ballSpeedY) <= 6) {
+                paddleMovement = 6;
+            } else if (Math.abs(ballSpeedY) > 3 && Math.abs(ballSpeedY) <= 4) {
+                paddleMovement = 5.5;
+            } else if (Math.abs(ballSpeedY) >= 1 && Math.abs(ballSpeedY) <= 3) {
+                paddleMovement = 5;
+            } else if (Math.abs(ballSpeedY) > 0 && Math.abs(ballSpeedY) < 1) {
+                paddleMovement = 4;
+            } else if (Math.abs(ballSpeedY) === 0){
+                paddleMovement = 3.5;
+            } else if (Math.abs(ballSpeedY) == 0 && Math.abs(ballSpeedX) == 0) {
+                paddleMovement = 0;
+            }
         }
 
         // when first entering multi-player mode, blue player serves first
@@ -301,13 +304,14 @@ function moveEverything() {
                 'gameId': gameId,
                 'playerColor': playerColor,
                 'paddle1Y': paddle1Y,
-                'paddle2Y': paddle2Y,
                 'ballX': ballX,
                 'ballY': ballY,
                 'ballSpeedX': ballSpeedX,
                 'ballSpeedY': ballSpeedY,
                 'mousePosBlue': mousePosBlue,
-                'redIsServing': redIsServing
+                'redIsServing': redIsServing,
+                'player1Score': player1Score,
+                'player2Score': player2Score
             }
             
             ws.send(JSON.stringify(payload));
