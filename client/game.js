@@ -183,14 +183,11 @@ window.onload = function() {
     };
 
     let shootBall = function(evt) {
-        console.log('shootball');
-        // ballSpeedX = -7;
-        ballSpeedX = -3;
+        ballSpeedX = -4;
         function getRandomNumberBetween(min,max){
             return Math.floor(Math.random()*(max-min+1)+min);
         }
-        // ballSpeedY = getRandomNumberBetween(-8, 8);
-        ballSpeedY = 0;
+        ballSpeedY = getRandomNumberBetween(-8, 8);
         canvas.removeEventListener('mousemove', puckResetPosition);
         canvas.removeEventListener('click', shootBall);
     };
@@ -247,7 +244,6 @@ function moveEverything() {
                 ballSpeedY = deltaY * 0.15;
             // outside of paddle, red scores
             } else {
-                console.log('did red serve');
                 // reset the score upon firstly joining a multi-player game
                 count++;
                 if (multiplayerMode && count === 1) {
@@ -362,13 +358,14 @@ function ballReset() {
         ballX = canvas.width - (PADDLE_THICKNESS + 25);
 
         // after the robo scores, the puck should reset in the middle
-        // if (!multiplayerMode) {
-        // }
-        ballY = paddle2Y + (PADDLE_HEIGHT / 2);
+        if (!multiplayerMode) {
+            ballY = canvas.height / 2;
+        } else {
+            ballY = paddle2Y + (PADDLE_HEIGHT / 2);
+        }
 
         let computerServe = function(evt) {
-            // ballSpeedX = 7;
-            ballSpeedX = 3;
+            ballSpeedX = 4;
         };
         
         // only have robo serve when single player
@@ -380,8 +377,7 @@ function ballReset() {
                 function getRandomNumberBetween(min,max){
                     return Math.floor(Math.random()*(max-min+1)+min);
                 }
-                // ballSpeedY = getRandomNumberBetween(-8, 8);
-                ballSpeedY = 0;
+                ballSpeedY = getRandomNumberBetween(-8, 8);
                 
                 computerServe();
             }, 1500);
