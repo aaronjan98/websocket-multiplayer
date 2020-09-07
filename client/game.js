@@ -8,6 +8,7 @@ let ballSpeedY = 0;
 var player1Score = 0;
 var player2Score = 0;
 const WINNING_SCORE = 2;
+var count = 0;
 
 let paddle1Y = 250;
 let paddle2Y = 250;
@@ -81,6 +82,7 @@ ws.onmessage = message => {
 
     // join
     if (response.method === 'join') {
+        debugger;
         console.log('response when joining: ', response);
         const game = response.game;
 
@@ -235,7 +237,7 @@ function moveEverything() {
             // inside paddle
             if (ballY > (paddle1Y-15) && ballY < paddle1Y+PADDLE_HEIGHT+15) {
                 
-                if(Math.abs(ballSpeedX) < 15) {
+                if (Math.abs(ballSpeedX) < 15) {
                     ballSpeedX = -ballSpeedX * 1.07;
                 } else {
                     ballSpeedX = -ballSpeedX * 1;
@@ -245,7 +247,16 @@ function moveEverything() {
                 ballSpeedY = deltaY * 0.15;
             // outside of paddle, red scores
             } else {
-                player2Score++;
+                console.log('did red serve');
+                // reset the score upon firstly joining a multi-player game
+                count++;
+                if (multiplayerMode && count === 1) {
+                    player1Score = 0;
+                    player2Score = 0;
+                } else {
+                    player2Score++;
+                }
+
                 ballReset();
             }
         } // right side of the canvas
