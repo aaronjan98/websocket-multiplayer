@@ -107,7 +107,7 @@ wsServer.on('request', request => {
             let ballX = result.ballX;
             let ballY = result.ballY;
             let ballSpeedX = result.ballSpeedX;
-            // let ballSpeedY = result.ballSpeedY;
+            let ballSpeedY = result.ballSpeedY;
             let state = {};
 
             state = games[gameId].state;
@@ -115,14 +115,15 @@ wsServer.on('request', request => {
             
             state.playerColor = playerColor;
             
-            state.ballSpeedX = ballSpeedX;
             
             if (playerColor === 'blue') {
                 state.ballX = ballX;
                 state.ballY = ballY;
-                // state.ballSpeedY = ballSpeedY;
+                state.ballSpeedX = ballSpeedX;
+                state.ballSpeedY = ballSpeedY;
             } else if (playerColor === 'red') {
                 state.mousePosRed = result.mousePosRed;
+                state.sendBallSpeedX = result.sendBallSpeedX;
             }
 
             // only update your own paddle position so that you don't affect the other player when the state updates.

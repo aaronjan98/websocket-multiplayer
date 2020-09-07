@@ -118,10 +118,7 @@ ws.onmessage = message => {
         if (playerColor === 'blue') {
             mousePosRed = cstate.mousePosRed;
             paddle2Y = cstate.paddle2Y - (PADDLE_HEIGHT/2);
-            // if (redIsServing) {
-            //     ballSpeedX = cstate.ballSpeedX;
-            //     console.log({ballSpeedX});
-            // }
+            sendBallSpeedX = cstate.sendBallSpeedX;
         } else if (playerColor === 'red') {
             paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
             ballSpeedX = cstate.ballSpeedX;
@@ -145,10 +142,9 @@ window.onload = function() {
     canvasContext.font = "30px Arial";
 
     var framesPerSecond = 60;
-    function log(event) {
-        event.stopPropagation();
-        console.log('clicked');
+    function redServes(event) {
         sendBallSpeedX = true;
+        canvas.removeEventListener('click', redServes);
     }
 
     setInterval(function() {
@@ -156,7 +152,7 @@ window.onload = function() {
         drawEverything();
 
         if (playerColor === 'red' && redIsServing) {
-            canvas.addEventListener('click', log);
+            canvas.addEventListener('click', redServes);
         };
     }, 1000 / framesPerSecond );
 
@@ -179,9 +175,7 @@ window.onload = function() {
     // position of the ball before the initial serve
     ballX = (30 + PADDLE_THICKNESS);
 
-    // calibrating ballY position
     let puckResetPosition = function(evt) {
-        // ballY = paddle1Y + PADDLE_HEIGHT / 2;
         ballY = mousePosBlue.y;
     };
 
@@ -220,14 +214,20 @@ function moveEverything() {
         computerMovement();
     }
 
-    
-    // incrementing puck position by its components speeds to appear speeding up
-    ballX += ballSpeedX;
-    ballY += ballSpeedY;
-
-    console.log(`${playerColor}: `, ballSpeedX);
-    
     if (playerColor === 'blue') {
+        // serving red player's puck
+        if(sendBallSpeedX && playerColor === 'blue') {
+            debugger;
+            ballSpeedX = -3;
+            ballSpeedY = 0;
+            sendBallSpeedX = false;
+            redIsServing = false;
+        }
+        
+        // incrementing puck position by its components speeds to appear speeding up
+        ballX += ballSpeedX;
+        ballY += ballSpeedY;
+
         //adjust the ball bounce from the paddles
         // left side of the canvas
         if (ballX < (PADDLE_THICKNESS + 15)) {
@@ -289,6 +289,7 @@ function moveEverything() {
         if (multiplayerMode && ballSpeedX === 0 && ballX < (canvas.width / 2)) {
             ballReset();
         }
+
     }
 
     if(multiplayerMode) {
@@ -311,35 +312,19 @@ function moveEverything() {
             
             ws.send(JSON.stringify(payload));
         } else if (playerColor === 'red') {
-            if (sendBallSpeedX) {
-                let payload = {
-                    'method': 'play',
-                    'clientId': clientId,
-                    'gameId': gameId,
-                    'playerColor': playerColor,
-                    'ballSpeedX': 3,
-                    'paddle2Y': paddle2Y,
-                    'mousePosRed': mousePosRed,
-                    'redIsServing': redIsServing
-                }
-
-                ws.send(JSON.stringify(payload)); 
-                sendBallSpeedX = false;
-                redIsServing = false;           
-            } else {
-                let payload = {
-                    'method': 'play',
-                    'clientId': clientId,
-                    'gameId': gameId,
-                    'playerColor': playerColor,
-                    'ballSpeedX': 0,
-                    'paddle2Y': paddle2Y,
-                    'mousePosRed': mousePosRed,
-                    'redIsServing': redIsServing
-                }
-                
-                ws.send(JSON.stringify(payload));            
+            let payload = {
+                'method': 'play',
+                'clientId': clientId,
+                'gameId': gameId,
+                'playerColor': playerColor,
+                'paddle2Y': paddle2Y,
+                'mousePosRed': mousePosRed,
+                'redIsServing': redIsServing,
+                'sendBallSpeedX': sendBallSpeedX
             }
+            
+            ws.send(JSON.stringify(payload));            
+            sendBallSpeedX = false;
         }
     } else {
         // if not multiplayer, the person is always going to play player1
@@ -427,8 +412,6 @@ function ballReset() {
         ballY = paddle1Y + (PADDLE_HEIGHT / 2);
 
         let mouseMoveBall = function(evt) {
-            // let serveMousePos = calculateMousePos(evt);
-            // ballY = serveMousePos.y;
             ballY = mousePosBlue.y;
         };
 
