@@ -116,20 +116,16 @@ wsServer.on('request', request => {
             state.playerColor = playerColor;
             
             
+            // only update your own puck and paddle state so that you don't affect the other player when the state updates.
             if (playerColor === 'blue') {
                 state.ballX = ballX;
                 state.ballY = ballY;
                 state.ballSpeedX = ballSpeedX;
                 state.ballSpeedY = ballSpeedY;
+                state.paddle1Y = playerPaddle1Y+45;
             } else if (playerColor === 'red') {
                 state.mousePosRed = result.mousePosRed;
                 state.sendBallSpeedX = result.sendBallSpeedX;
-            }
-
-            // only update your own paddle position so that you don't affect the other player when the state updates.
-            if (playerColor === 'blue') {
-                state.paddle1Y = playerPaddle1Y+45;
-            } else if (playerColor === 'red') {
                 state.paddle2Y = playerPaddle2Y+45;
             }
 
@@ -157,7 +153,7 @@ function updateGameState(){
     //{"gameid", fasdfsf}
     for (const g of Object.keys(games)) {
         const game = games[g];
-        // console.log('game from server: ', game.state);
+        
         const payLoad = {
             "method": "update",
             "game": game.state

@@ -112,7 +112,6 @@ ws.onmessage = message => {
         // use information from this response from the server to update the game to match the changes that my other opponent made
 
         let cstate = response.game;
-        // console.log('response.game: ', cstate);
 
         // updating paddle position for player who didn't move that paddle
         if (playerColor === 'blue') {
@@ -128,11 +127,12 @@ ws.onmessage = message => {
         // update ball position and speed
         ballX = cstate.ballX;
         ballY = cstate.ballY;
-        // ballSpeedY = cstate.ballSpeedY;
     }
 }
 
 /****************** Render the entire canvas below ******************/
+
+var count = 0
 
 // play
 window.onload = function() {
@@ -142,10 +142,9 @@ window.onload = function() {
     canvasContext.font = "30px Arial";
 
     var framesPerSecond = 60;
-    function redServes(event) {
+    function redServes(evt) {
         sendBallSpeedX = true;
         canvas.removeEventListener('click', redServes);
-        debugger;
     }
 
     setInterval(function() {
@@ -167,7 +166,7 @@ window.onload = function() {
                 mousePosBlue = eventMousePos;
             }
         } else if (playerColor === 'red') {
-            if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
+            if (eventMousePos.x !== null || eventMousePos.x !== undefined) {
                 mousePosRed = eventMousePos;
             }
         }
@@ -217,7 +216,7 @@ function moveEverything() {
 
     if (playerColor === 'blue') {
         // serving red player's puck
-        if(sendBallSpeedX && playerColor === 'blue') {
+        if(redIsServing && sendBallSpeedX && playerColor === 'blue') {
             ballSpeedX = -3;
             ballSpeedY = 0;
             ballY = mousePosRed.y;
@@ -233,7 +232,7 @@ function moveEverything() {
         // left side of the canvas
         if (ballX < (PADDLE_THICKNESS + 15)) {
             // inside paddle
-            if (ballY > (paddle1Y-20) && ballY < paddle1Y+PADDLE_HEIGHT+20) {
+            if (ballY > (paddle1Y-15) && ballY < paddle1Y+PADDLE_HEIGHT+15) {
                 
                 if(Math.abs(ballSpeedX) < 15) {
                     ballSpeedX = -ballSpeedX * 1.07;
@@ -250,7 +249,7 @@ function moveEverything() {
             }
         } // right side of the canvas
         else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) {
-            if (ballY > (paddle2Y-20) && ballY < paddle2Y+PADDLE_HEIGHT+20) {
+            if (ballY > (paddle2Y-15) && ballY < paddle2Y+PADDLE_HEIGHT+15) {
                 ballSpeedX = -ballSpeedX;
 
                 var deltaY = ballY - (paddle2Y+PADDLE_HEIGHT/2);
@@ -345,7 +344,7 @@ function ballReset() {
     // to reset the puck you have to know which direction the point made it to, which you can tell with the negative and positive x-directional speed of the puck.
     if(ballSpeedX < 0){ // paddle 2 scores
         ballSpeedX = 0;
-        ballX = canvas.width - (PADDLE_THICKNESS + 30);
+        ballX = canvas.width - (PADDLE_THICKNESS + 25);
 
         // after the robo scores, the puck should reset in the middle
         // if (!multiplayerMode) {
@@ -359,41 +358,8 @@ function ballReset() {
         
         // only have robo serve when single player
         if (multiplayerMode) {
-            // ballY = paddle2Y + (PADDLE_HEIGHT / 2);
-
+            // set this to true so that the click event handler for the red player to serve meets the condition
             redIsServing = true;
-            
-            // setInterval(function () {
-                // ballY = mousePosRed.y;
-            //     colorCircle(ballX, ballY, 10, 'yellow');
-            // }, 16 );
-
-            //! the reason this isn't working is bc all the ball information is on the blue client
-            // let mouseMoveBall = function(evt) {
-            //     console.log('mousePosRed Y:', mousePosRed.y);
-            //     // ballY = mousePosRed.y;
-            // };
-            
-            // let shootBall = function(evt) {
-            //     // multiPlayerFirstServe = false;
-            //     // ballSpeedX = 7;
-            //     ballSpeedX = 3;
-            //     function getRandomNumberBetween(min,max){
-            //         return Math.floor(Math.random()*(max-min+1)+min);
-            //     }
-            //     // ballSpeedY = getRandomNumberBetween(-8, 8);
-            //     ballSpeedY = 0;
-
-            //     canvas.removeEventListener('mousemove', mouseMoveBall);
-            //     canvas.removeEventListener('click', shootBall);
-            // };
-
-            // //* I have to have an event listener on the client that I'm listening on
-            // if (playerColor === 'red') {
-                
-            //     // canvas.addEventListener('click', shootBall);
-            //     canvas.addEventListener('mousemove', mouseMoveBall);
-            // }
         } else if (!multiplayerMode) {
             setTimeout(() => {
                 function getRandomNumberBetween(min,max){
@@ -410,7 +376,7 @@ function ballReset() {
         ballSpeedX = 0;
         ballX = (25 + PADDLE_THICKNESS);
 
-        ballY = paddle1Y + (PADDLE_HEIGHT / 2);
+        ballY = mousePosBlue.y;
 
         let mouseMoveBall = function(evt) {
             ballY = mousePosBlue.y;
