@@ -120,12 +120,13 @@ ws.onmessage = message => {
             paddle2Y = cstate.paddle2Y - (PADDLE_HEIGHT/2);
             // if (redIsServing) {
             //     ballSpeedX = cstate.ballSpeedX;
+            //     console.log({ballSpeedX});
             // }
         } else if (playerColor === 'red') {
             paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
-            redIsServing = cstate.redIsServing;
             ballSpeedX = cstate.ballSpeedX;
         }
+        redIsServing = cstate.redIsServing;
 
         // update ball position and speed
         ballX = cstate.ballX;
