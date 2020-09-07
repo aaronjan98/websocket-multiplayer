@@ -145,6 +145,7 @@ window.onload = function() {
     function redServes(event) {
         sendBallSpeedX = true;
         canvas.removeEventListener('click', redServes);
+        debugger;
     }
 
     setInterval(function() {
@@ -217,9 +218,9 @@ function moveEverything() {
     if (playerColor === 'blue') {
         // serving red player's puck
         if(sendBallSpeedX && playerColor === 'blue') {
-            debugger;
             ballSpeedX = -3;
             ballSpeedY = 0;
+            ballY = mousePosRed.y;
             sendBallSpeedX = false;
             redIsServing = false;
         }
