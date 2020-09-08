@@ -82,7 +82,6 @@ ws.onmessage = message => {
 
     // join
     if (response.method === 'join') {
-        debugger;
         console.log('response when joining: ', response);
         const game = response.game;
 
@@ -159,7 +158,6 @@ window.onload = function() {
         };
     }, 1000 / framesPerSecond );
 
-    // canvas.addEventListener('mousedown', handleMouseClick);
 
     canvas.addEventListener('mousemove', function(evt) {
         let eventMousePos = calculateMousePos(evt);
@@ -192,7 +190,7 @@ window.onload = function() {
         canvas.removeEventListener('click', shootBall);
     };
     
-    if (playerColor === 'blue') {
+    if (playerColor === 'blue' && !showingWinScreen) {
         canvas.addEventListener('click', shootBall);
         canvas.addEventListener('mousemove', puckResetPosition);
     }
@@ -345,9 +343,10 @@ function moveEverything() {
     
 function ballReset() {
     // commenting the win screen temporarily
-    // if(player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
-    //     showingWinScreen = true;
-    // }
+    if(player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
+        showingWinScreen = true;
+        return;
+    }
 
     // to reset the puck, it can't be traveling in the y-direction
     ballSpeedY = 0;
@@ -428,6 +427,7 @@ function drawEverything() {
         }
         
         canvasContext.fillText("click to play again", 305, 500);
+        canvas.addEventListener('click', handleMouseClick);
         return;
     }
 
@@ -470,7 +470,11 @@ function handleMouseClick(evt) {
     if(showingWinScreen) {
         player1Score = 0;
         player2Score = 0;
+        // ballSpeedX = 0;
+        // ballSpeedY = 0;
         showingWinScreen = false;
+        ballReset();
+        canvas.removeEventListener('click', handleMouseClick);
     }
 }
     
