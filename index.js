@@ -123,6 +123,7 @@ wsServer.on('request', request => {
                 state.paddle1Y = playerPaddle1Y+45;
                 state.player1Score = result.player1Score;
                 state.player2Score = result.player2Score;
+                state.showingWinScreen = result.showingWinScreen;
             } else if (playerColor === 'red') {
                 state.mousePosRed = result.mousePosRed;
                 state.sendBallSpeedX = result.sendBallSpeedX;

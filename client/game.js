@@ -124,6 +124,7 @@ ws.onmessage = message => {
             ballSpeedX = cstate.ballSpeedX;
             player1Score = cstate.player1Score;
             player2Score = cstate.player2Score;
+            showingWinScreen = cstate.showingWinScreen;
         }
         redIsServing = cstate.redIsServing;
 
@@ -153,7 +154,7 @@ window.onload = function() {
         moveEverything();
         drawEverything();
 
-        if (playerColor === 'red' && redIsServing) {
+        if (playerColor === 'red' && redIsServing && !showingWinScreen) {
             canvas.addEventListener('click', redServes);
         };
     }, 1000 / framesPerSecond );
@@ -316,7 +317,8 @@ function moveEverything() {
                 'mousePosBlue': mousePosBlue,
                 'redIsServing': redIsServing,
                 'player1Score': player1Score,
-                'player2Score': player2Score
+                'player2Score': player2Score,
+                'showingWinScreen': showingWinScreen
             }
             
             ws.send(JSON.stringify(payload));
@@ -468,12 +470,25 @@ function calculateMousePos(evt) {
 // while on the black screen when you receive the scores, this fxn allows the player to click to restart the game
 function handleMouseClick(evt) {
     if(showingWinScreen) {
-        player1Score = 0;
-        player2Score = 0;
-        // ballSpeedX = 0;
-        // ballSpeedY = 0;
+        if (multiplayerMode) {
+            // have to tell which one is the winner here so that I can decrease the score by 1.
+            if (ballX < (PADDLE_THICKNESS + 15)) { // red scored
+                player1Score = 0;
+                player2Score = -1;
+            } else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) { // blue scored
+                player1Score = -1;
+                player2Score = 0;
+            }
+        } else if (!multiplayerMode) {
+            player1Score = 0;
+            player2Score = 0;
+
+        }
+        
         showingWinScreen = false;
-        ballReset();
+        if (!multiplayerMode) {
+            ballReset();
+        }
         canvas.removeEventListener('click', handleMouseClick);
     }
 }
