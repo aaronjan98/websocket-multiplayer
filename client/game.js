@@ -421,18 +421,24 @@ function drawEverything() {
     if(showingWinScreen) {
         canvasContext.fillStyle = 'white';
 
-        if (player1Score >= WINNING_SCORE && playerColor === 'blue') {
-            canvasContext.fillText("You Won!", 340, 200);
-        } else if (player1Score >= WINNING_SCORE && playerColor === 'red') {
-            canvasContext.fillText("You Lost", 340, 200);
-        }
-        if (player2Score >= WINNING_SCORE && !multiplayerMode) {
-            canvasContext.fillText("Robo Won", 340, 200);
-        }
-        if (player2Score >= WINNING_SCORE && playerColor === 'red') {
-            canvasContext.fillText("You Won", 340, 200);
-        } else if (player2Score >= WINNING_SCORE && playerColor === 'blue') {
-            canvasContext.fillText("You Lost", 340, 200);
+        if (multiplayerMode) {
+            if (player1Score >= WINNING_SCORE && playerColor === 'blue') {
+                canvasContext.fillText("You Won!", 340, 200);
+            } else if (player1Score >= WINNING_SCORE && playerColor === 'red') {
+                canvasContext.fillText("You Lost", 340, 200);
+            }
+            if (player2Score >= WINNING_SCORE && playerColor === 'red') {
+                canvasContext.fillText("You Won", 340, 200);
+            } else if (player2Score >= WINNING_SCORE && playerColor === 'blue') {
+                canvasContext.fillText("You Lost", 340, 200);
+            }
+        } else if (!multiplayerMode) {
+            if (player1Score >= WINNING_SCORE) {
+                canvasContext.fillText("You Won!", 340, 200);
+            }
+            if (player2Score >= WINNING_SCORE) {
+                canvasContext.fillText("Robo Won", 340, 200);
+            }
         }
         
         canvasContext.fillText("click to play again", 305, 500);
