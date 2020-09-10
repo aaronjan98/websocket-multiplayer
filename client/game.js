@@ -7,7 +7,7 @@ let ballSpeedY = 0;
 
 var player1Score = 0;
 var player2Score = 0;
-const WINNING_SCORE = 2;
+const WINNING_SCORE = 11;
 var count = 0;
 
 let paddle1Y = 250;
@@ -16,10 +16,11 @@ let paddleMovement = 4;
 const PADDLE_THICKNESS = 10;
 const PADDLE_HEIGHT = 90;
 
-var showingWinScreen = false;
+var scoreBoard = false;
 var multiplayerMode = false;
 var redIsServing = false;
 var sendBallSpeedX = false;
+var sendPlayAgain = false;
 var mousePosBlue;
 var mousePosRed;
 
@@ -119,13 +120,18 @@ ws.onmessage = message => {
             mousePosRed = cstate.mousePosRed;
             paddle2Y = cstate.paddle2Y - (PADDLE_HEIGHT/2);
             sendBallSpeedX = cstate.sendBallSpeedX;
+            sendPlayAgain = cstate.sendPlayAgain;
+            if (sendPlayAgain) {
+                console.log('Red wants to play again :)');
+            }
         } else if (playerColor === 'red') {
             paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
             ballSpeedX = cstate.ballSpeedX;
             player1Score = cstate.player1Score;
             player2Score = cstate.player2Score;
-            showingWinScreen = cstate.showingWinScreen;
+            scoreBoard = cstate.scoreBoard;
         }
+        
         redIsServing = cstate.redIsServing;
 
         // update ball position and speed
@@ -152,9 +158,10 @@ window.onload = function() {
 
     setInterval(function() {
         moveEverything();
+        playMethod();
         drawEverything();
 
-        if (playerColor === 'red' && redIsServing && !showingWinScreen) {
+        if (playerColor === 'red' && redIsServing && !scoreBoard) {
             canvas.addEventListener('click', redServes);
         };
     }, 1000 / framesPerSecond );
@@ -191,16 +198,18 @@ window.onload = function() {
         canvas.removeEventListener('click', shootBall);
     };
     
-    if (playerColor === 'blue' && !showingWinScreen) {
+    if (playerColor === 'blue' && !scoreBoard && !multiplayerMode) {
         canvas.addEventListener('click', shootBall);
         canvas.addEventListener('mousemove', puckResetPosition);
     }
 } // window onload
 
 function moveEverything() {
-    if(showingWinScreen) {
+    if(scoreBoard) {
         return;
     }
+
+    console.log(playerColor, ' scoreBoard: ', scoreBoard);
 
     // put logic to decide which player controls what paddle
     if (playerColor === 'blue') {
@@ -300,53 +309,62 @@ function moveEverything() {
         }
 
     }
+} // moveEverything()
 
-    if(multiplayerMode) {
-        if (playerColor === 'blue') {
-            // send to the server the information that is needed to replicate the change that this event listener listened upon.
-            let payload = {
-                'method': 'play',
-                'clientId': clientId,
-                'gameId': gameId,
-                'playerColor': playerColor,
-                'paddle1Y': paddle1Y,
-                'ballX': ballX,
-                'ballY': ballY,
-                'ballSpeedX': ballSpeedX,
-                'ballSpeedY': ballSpeedY,
-                'mousePosBlue': mousePosBlue,
-                'redIsServing': redIsServing,
-                'player1Score': player1Score,
-                'player2Score': player2Score,
-                'showingWinScreen': showingWinScreen
-            }
-            
-            ws.send(JSON.stringify(payload));
-        } else if (playerColor === 'red') {
-            let payload = {
-                'method': 'play',
-                'clientId': clientId,
-                'gameId': gameId,
-                'playerColor': playerColor,
-                'paddle2Y': paddle2Y,
-                'mousePosRed': mousePosRed,
-                'redIsServing': redIsServing,
-                'sendBallSpeedX': sendBallSpeedX
-            }
-            
-            ws.send(JSON.stringify(payload));            
-            sendBallSpeedX = false;
-        }
+function playMethod() {
+
+    if (multiplayerMode) {
+        sendPlayPayload();
     } else {
         // if not multiplayer, the person is always going to play player1
         paddle1Y = mousePosBlue.y - (PADDLE_HEIGHT/2);
     }
-} // moveEverything()
+}
+
+function sendPlayPayload() {
+    if (playerColor === 'blue') {
+        // send to the server the information that is needed to replicate the change that this event listener listened upon.
+        let payload = {
+            'method': 'play',
+            'clientId': clientId,
+            'gameId': gameId,
+            'playerColor': playerColor,
+            'paddle1Y': paddle1Y,
+            'ballX': ballX,
+            'ballY': ballY,
+            'ballSpeedX': ballSpeedX,
+            'ballSpeedY': ballSpeedY,
+            'mousePosBlue': mousePosBlue,
+            'redIsServing': redIsServing,
+            'player1Score': player1Score,
+            'player2Score': player2Score,
+            'scoreBoard': scoreBoard
+        }
+        
+        ws.send(JSON.stringify(payload));
+    } else if (playerColor === 'red') {
+        let payload = {
+            'method': 'play',
+            'clientId': clientId,
+            'gameId': gameId,
+            'playerColor': playerColor,
+            'paddle2Y': paddle2Y,
+            'sendBallSpeedX': sendBallSpeedX,
+            'sendPlayAgain': sendPlayAgain,
+            'mousePosRed': mousePosRed,
+            'redIsServing': redIsServing
+        }
+        
+        ws.send(JSON.stringify(payload));            
+        sendBallSpeedX = false;
+        sendPlayAgain = false;
+    }
+}
     
 function ballReset() {
     // commenting the win screen temporarily
-    if(player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
-        showingWinScreen = true;
+    if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
+        scoreBoard = true;
         return;
     }
 
@@ -395,13 +413,11 @@ function ballReset() {
         };
 
         let shootBall = function(evt) {
-            // ballSpeedX = -7;
-            ballSpeedX = -3;
+            ballSpeedX = -4;
             function getRandomNumberBetween(min,max){
                 return Math.floor(Math.random()*(max-min+1)+min);
             }
-            // ballSpeedY = getRandomNumberBetween(-8, 8);
-            ballSpeedY = 0;
+            ballSpeedY = getRandomNumberBetween(-4, 4);
             canvas.removeEventListener('mousemove', mouseMoveBall);
             canvas.removeEventListener('click', shootBall);
         };
@@ -418,7 +434,7 @@ function drawEverything() {
     colorRect(0, 0, canvas.width, canvas.height, 'black');
     
     // blacks the screen at the end of the game and tells who won
-    if(showingWinScreen) {
+    if(scoreBoard) {
         canvasContext.fillStyle = 'white';
 
         if (multiplayerMode) {
@@ -442,8 +458,32 @@ function drawEverything() {
         }
         
         canvasContext.fillText("click to play again", 305, 500);
-        canvas.addEventListener('click', handleMouseClick);
-        return;
+
+        // if red player touched to play again, that is indicated in the var sendPlayAgain
+        if (playerColor === 'blue' && sendPlayAgain) {
+            if (multiplayerMode) {
+                // have to tell which one is the winner here so that I can decrease the score by 1.
+                if (ballX < (PADDLE_THICKNESS + 15)) { // red scored
+                    player1Score = 0;
+                    player2Score = -1;
+                } else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) { // blue scored
+                    player1Score = -1;
+                    player2Score = 0;
+                }
+            } else if (!multiplayerMode) {
+                player1Score = 0;
+                player2Score = 0;
+        
+            }
+            
+            sendPlayAgain = false;
+            scoreBoard = false;
+            // else we'll have a click handler executing a fxn w/ the same logic as above
+        } else {
+            canvas.addEventListener('click', handleMouseClick);
+
+            return;
+        }
     }
 
     drawNet();
@@ -482,28 +522,34 @@ function calculateMousePos(evt) {
 
 // while on the black screen when you receive the scores, this fxn allows the player to click to restart the game
 function handleMouseClick(evt) {
-    if(showingWinScreen) {
-        if (multiplayerMode) {
-            // have to tell which one is the winner here so that I can decrease the score by 1.
-            if (ballX < (PADDLE_THICKNESS + 15)) { // red scored
-                player1Score = 0;
-                player2Score = -1;
-            } else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) { // blue scored
-                player1Score = -1;
-                player2Score = 0;
-            }
-        } else if (!multiplayerMode) {
-            player1Score = 0;
-            player2Score = 0;
-
-        }
-        
-        showingWinScreen = false;
-        if (!multiplayerMode) {
-            ballReset();
-        }
-        canvas.removeEventListener('click', handleMouseClick);
+    console.log('clicked!');
+    debugger;
+    if (playerColor === 'red') {
+        sendPlayAgain = true;
+        console.log('yay: ', sendPlayAgain);
     }
+
+    if (multiplayerMode) {
+        // have to tell which one is the winner here so that I can decrease the score by 1.
+        if (ballX < (PADDLE_THICKNESS + 15)) { // red scored
+            player1Score = 0;
+            player2Score = -1;
+        } else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) { // blue scored
+            player1Score = -1;
+            player2Score = 0;
+        }
+    } else if (!multiplayerMode) {
+        player1Score = 0;
+        player2Score = 0;
+
+    }
+    
+    scoreBoard = false;
+
+    if (!multiplayerMode) {
+        ballReset();
+    }
+    canvas.removeEventListener('click', handleMouseClick);
 }
     
 function computerMovement() {
