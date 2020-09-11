@@ -1,12 +1,13 @@
 {
   "name": "websocket-multiplayer",
   "version": "1.0.0",
-  "description": "Building multiplayer game with Native websockets",
+  "description": "Building multiplayer pong game with native websockets",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-js": "mkdir -p dist/js && uglifyjs src/js/*.js -m -o dist/js/app.js"
   },
   "repository": {
     "type": "git",

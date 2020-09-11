@@ -5,7 +5,8 @@ const app = express();
 app.get('/', (req, res) => res.sendFile(__dirname + '/client/index.html'));
 app.listen(9091, () => console.log('Listening on http port 9091'));
 
-app.use(express.static('client'));
+// app.use(express.static('client'));
+app.use(express.static(__dirname + '/client'));
 
 const websocketServer = require('websocket').server;
 const httpServer = http.createServer();
@@ -20,14 +21,6 @@ let games = {};
 const wsServer = new websocketServer({
     'httpServer': httpServer
 });
-
-// websocketServer.broadcast = function(data, sender) {
-//     websocketServer.clients.forEach(function(client) {
-//       if (client !== sender) {
-//         client.send(data);
-//       }
-//     })
-// }
 
 wsServer.on('request', request => {
     // connect

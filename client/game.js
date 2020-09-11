@@ -7,7 +7,7 @@ let ballSpeedY = 0;
 
 var player1Score = 0;
 var player2Score = 0;
-const WINNING_SCORE = 11;
+const WINNING_SCORE = 2;
 var count = 0;
 
 let paddle1Y = 250;
