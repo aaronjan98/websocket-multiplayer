@@ -2,6 +2,12 @@ html, body {
     margin: 0;
     padding: 0;
     background-color: #9420C0;
+    color: black;
+}
+
+@font-face {
+    font-family: arcadeclassic;
+    src: url(arcadeclassic.ttf);
 }
 
 .container {
@@ -10,4 +16,9 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.container .pong-title {
+    font-size: 40px;
+    color: black;
 }

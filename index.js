@@ -31,7 +31,6 @@ wsServer.on('request', request => {
     connection.on('message', message => {
         // Data that the server receives
         const result = JSON.parse(message.utf8Data);
-        // console.log('RESULT from message connection: ', result);
 
         // I have received a message from the client
         // User wants to create a new game
