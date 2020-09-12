@@ -25,11 +25,14 @@ var sendPlayAgain = false;
 var mousePosBlue;
 var mousePosRed;
 
-// HTML elements
 let clientId = null;
 let gameId = null;
 let playerColor = 'blue';
+
+let HOST = location.origin.replace(/^http/, 'ws')
 let ws = new WebSocket('ws://localhost:9090');
+
+// HTML elements
 const btnCreate = document.getElementById('btnCreate');
 const btnJoin = document.getElementById('btnJoin');
 const txtGameId = document.getElementById('txtGameId');
