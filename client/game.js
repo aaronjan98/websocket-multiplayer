@@ -7,7 +7,8 @@ let ballSpeedY = 0;
 
 var player1Score = 0;
 var player2Score = 0;
-const WINNING_SCORE = 2;
+const WINNING_SCORE = 11;
+var winner = null;
 var count = 0;
 
 let paddle1Y = 250;
@@ -127,6 +128,7 @@ ws.onmessage = message => {
             player1Score = cstate.player1Score;
             player2Score = cstate.player2Score;
             scoreBoard = cstate.scoreBoard;
+            winner = cstate.winner;
         }
         
         redIsServing = cstate.redIsServing;
@@ -179,7 +181,7 @@ window.onload = function() {
     });
 
     // position of the ball before the initial serve
-    ballX = (30 + PADDLE_THICKNESS);
+    ballX = (25 + PADDLE_THICKNESS);
 
     let puckResetPosition = function(evt) {
         ballY = mousePosBlue.y;
@@ -335,7 +337,8 @@ function sendPlayPayload() {
             'redIsServing': redIsServing,
             'player1Score': player1Score,
             'player2Score': player2Score,
-            'scoreBoard': scoreBoard
+            'scoreBoard': scoreBoard,
+            'winner': winner
         }
         
         ws.send(JSON.stringify(payload));
@@ -359,8 +362,14 @@ function sendPlayPayload() {
 }
     
 function ballReset() {
-    // commenting the win screen temporarily
-    if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
+    // game is played to 11 points if the player ahead is 2 points or above
+    if (player1Score >= WINNING_SCORE && (player1Score - player2Score >= 2)) {
+        winner = 'blue';
+        scoreBoard = true;
+        return;
+    }
+    if (player2Score >= WINNING_SCORE && (player2Score - player1Score >= 2)) {
+        winner = 'red';
         scoreBoard = true;
         return;
     }
@@ -373,7 +382,7 @@ function ballReset() {
         ballSpeedX = 0;
         ballX = canvas.width - (PADDLE_THICKNESS + 25);
 
-        // after the robo scores, the puck should reset in the middle
+        // after the robo scores, the puck should reset in the middle of the canvas where the ai paddle will follow
         if (!multiplayerMode) {
             ballY = canvas.height / 2;
         } else {
@@ -435,21 +444,21 @@ function drawEverything() {
         canvasContext.fillStyle = 'pink';
 
         if (multiplayerMode) {
-            if (player1Score >= WINNING_SCORE && playerColor === 'blue') {
+            if (winner === 'blue' && playerColor === 'blue') {
                 canvasContext.fillText("You   Won", 230, 150);
-            } else if (player1Score >= WINNING_SCORE && playerColor === 'red') {
+            } else if (winner === 'blue' && playerColor === 'red') {
                 canvasContext.fillText("You   Lost", 230, 150);
             }
-            if (player2Score >= WINNING_SCORE && playerColor === 'red') {
+            if (winner === 'red' && playerColor === 'red') {
                 canvasContext.fillText("You   Won", 230, 150);
-            } else if (player2Score >= WINNING_SCORE && playerColor === 'blue') {
+            } else if (winner === 'red' && playerColor === 'blue') {
                 canvasContext.fillText("You   Lost", 230, 150);
             }
         } else if (!multiplayerMode) {
-            if (player1Score >= WINNING_SCORE) {
+            if (winner === 'blue') {
                 canvasContext.fillText("You   Won", 230, 150);
             }
-            if (player2Score >= WINNING_SCORE) {
+            if (winner === 'red') {
                 canvasContext.fillText("Robo   Won", 225, 150);
             }
         }
@@ -551,9 +560,9 @@ function handleMouseClick(evt) {
     
 function computerMovement() {
     var paddle2YCenter = paddle2Y + (PADDLE_HEIGHT / 2);
-    if(paddle2YCenter < ballY) {
+    if (paddle2YCenter < ballY) {
         paddle2Y += paddleMovement;
-    }else if (paddle2YCenter > ballY){
+    } else if (paddle2YCenter > ballY) {
         paddle2Y -= paddleMovement;
     }
 }

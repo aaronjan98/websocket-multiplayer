@@ -1,6 +1,4 @@
 const http = require('http');
-const http2 = require('http2');
-const fs = require('fs');
 
 // serve this page on another port with express
 const express = require('express');
@@ -119,6 +117,7 @@ wsServer.on('request', request => {
                 state.player1Score = result.player1Score;
                 state.player2Score = result.player2Score;
                 state.scoreBoard = result.scoreBoard;
+                state.winner = result.winner;
             } else if (playerColor === 'red') {
                 state.mousePosRed = result.mousePosRed;
                 state.sendBallSpeedX = result.sendBallSpeedX;
