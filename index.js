@@ -11,13 +11,22 @@ const server = express()
 
 const wss = new Server({ server });
 */
+// const PORT = process.env.PORT || 3000;
+// const INDEX = '/index.html';
+
+// const server = express()
+// .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+// .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const http = require('http');
 
 // serve this page on another port with express
+const INDEX = '/client/index.html';
+const PORT = process.env.PORT || 9090;
 const express = require('express');
 const app = express();
-app.get('/', (req, res) => res.sendFile(__dirname + '/client/index.html'));
+// app.get('/', (req, res) => res.sendFile(__dirname + '/client/index.html'));
+app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
 app.listen(9091, () => console.log('Listening on http port 9091'));
 
 // app.use(express.static('client'));
@@ -25,7 +34,6 @@ app.use(express.static(__dirname + '/client'));
 
 const websocketServer = require('websocket').server;
 const httpServer = http.createServer();
-const PORT = process.env.PORT || 9090;
 httpServer.listen(PORT, () => console.log(`listening on ${PORT}`));
 
 let color = 'blue';
