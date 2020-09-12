@@ -221,7 +221,10 @@ function moveEverything() {
         // serving red player's puck
         if(redIsServing && sendBallSpeedX && playerColor === 'blue') {
             ballSpeedX = -4;
-            ballSpeedY = 0;
+            function getRandomNumberBetween(min,max){
+                return Math.floor(Math.random()*(max-min+1)+min);
+            }
+            ballSpeedY = getRandomNumberBetween(-4, 4);
             ballY = mousePosRed.y;
             sendBallSpeedX = false;
             redIsServing = false;
