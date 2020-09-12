@@ -1,4 +1,7 @@
 const http = require('http');
+const http2 = require('http2');
+const fs = require('fs');
+
 // serve this page on another port with express
 const express = require('express');
 const app = express();

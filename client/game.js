@@ -1,6 +1,6 @@
 let canvas;
 let canvasContext;
-let ballX = 350;
+let ballX = 345;
 let ballY = 295;
 let ballSpeedX = 0;
 let ballSpeedY = 0;
@@ -236,7 +236,7 @@ function moveEverything() {
 
         //adjust the ball bounce from the paddles
         // left side of the canvas
-        if (ballX < (PADDLE_THICKNESS + 15)) {
+        if ((ballX - 10) < (PADDLE_THICKNESS + 15)) {
             // inside paddle
             if (ballY > (paddle1Y-15) && ballY < paddle1Y+PADDLE_HEIGHT+15) {
                 
@@ -262,7 +262,7 @@ function moveEverything() {
                 ballReset();
             }
         } // right side of the canvas
-        else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) {
+        else if ((ballX + 10) > (canvas.width - (PADDLE_THICKNESS + 15))) {
             if (ballY > (paddle2Y-15) && ballY < paddle2Y+PADDLE_HEIGHT+15) {
                 ballSpeedX = -ballSpeedX;
 
@@ -275,10 +275,10 @@ function moveEverything() {
         }
 
         // puck changes direction when bumping up the walls
-        if (ballY < 0) {
+        if ((ballY-10) < 0) {
             ballSpeedY = -ballSpeedY;
         }
-        if (ballY > canvas.height) {
+        if ((ballY+10) > canvas.height) {
             ballSpeedY = -ballSpeedY;
         }
 
@@ -302,7 +302,7 @@ function moveEverything() {
         }
 
         // when first entering multi-player mode, blue player serves first
-        if (multiplayerMode && ballSpeedX === 0 && ballX < (canvas.width / 2)) {
+        if (multiplayerMode && ballSpeedX === 0 && (ballX-10) < (canvas.width / 2)) {
             ballReset();
         }
 
@@ -462,10 +462,10 @@ function drawEverything() {
         if (playerColor === 'blue' && sendPlayAgain) {
             if (multiplayerMode) {
                 // have to tell which one is the winner here so that I can decrease the score by 1.
-                if (ballX < (PADDLE_THICKNESS + 15)) { // red scored
+                if ((ballX-10) < (PADDLE_THICKNESS + 15)) { // red scored
                     player1Score = 0;
                     player2Score = -1;
-                } else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) { // blue scored
+                } else if ((ballX+10) > (canvas.width - (PADDLE_THICKNESS + 15))) { // blue scored
                     player1Score = -1;
                     player2Score = 0;
                 }
@@ -528,10 +528,10 @@ function handleMouseClick(evt) {
 
     if (multiplayerMode) {
         // have to tell which one is the winner here so that I can decrease the score by 1.
-        if (ballX < (PADDLE_THICKNESS + 15)) { // red scored
+        if ((ballX-10) < (PADDLE_THICKNESS + 15)) { // red scored
             player1Score = 0;
             player2Score = -1;
-        } else if (ballX > (canvas.width - (PADDLE_THICKNESS + 15))) { // blue scored
+        } else if ((ballX+10) > (canvas.width - (PADDLE_THICKNESS + 15))) { // blue scored
             player1Score = -1;
             player2Score = 0;
         }
