@@ -29,7 +29,10 @@ let clientId = null;
 let gameId = null;
 let playerColor = 'blue';
 
-let HOST = location.origin.replace(/^http/, 'ws');
+let port = parseInt(location.port)-1;
+let protocol = location.protocol.replace(/^http/, 'ws');
+let hostname = location.hostname;
+let HOST = `${protocol}//${hostname}:${port}`;
 
 let ws = new WebSocket(HOST);
 
