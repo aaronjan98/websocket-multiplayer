@@ -29,9 +29,9 @@ let clientId = null;
 let gameId = null;
 let playerColor = 'blue';
 
-let HOST = location.origin.replace(/^http/, 'ws')
+let HOST = location.origin.replace(/^http/, 'ws');
 
-let ws = new WebSocket('/');
+let ws = new WebSocket(HOST);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
