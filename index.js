@@ -22,12 +22,12 @@ const http = require('http');
 
 // serve this page on another port with express
 const INDEX = '/public/index.html';
-const PORT = process.env.PORT || 9090;
+const PORT = process.env.PORT || 8080;
 const express = require('express');
 const app = express();
 // app.get('/', (req, res) => res.sendFile(__dirname + '/public/index.html'));
 app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
-app.listen(9091, () => console.log('Listening on http port 9091'));
+app.listen(8081, () => console.log('Listening on http port 8081'));
 
 // app.use(express.static('public'));
 app.use(express.static(__dirname + '/public'));

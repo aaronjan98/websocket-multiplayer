@@ -4,6 +4,7 @@
   "description": "Building multiplayer pong game with native websockets",
   "main": "index.js",
   "scripts": {
+    "deploy": "gcloud app deploy",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",

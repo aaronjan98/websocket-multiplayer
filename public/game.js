@@ -7,7 +7,7 @@ let ballSpeedY = 0;
 
 var player1Score = 0;
 var player2Score = 0;
-const WINNING_SCORE = 11;
+const WINNING_SCORE = 2;
 var winner = null;
 var count = 0;
 
@@ -31,7 +31,7 @@ let playerColor = 'blue';
 
 let HOST = location.origin.replace(/^http/, 'ws')
 
-let ws = new WebSocket(`ws://localhost:9090`);
+let ws = new WebSocket('/');
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
