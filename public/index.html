@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./styles/index.css">
+    <title>Multiplayer Pong</title>
+
+</head>
+<body>
+    <div class="container">
+        <h1 class="pong-title">Ping Pong</h1> 
+
+        <!-- Pong Elements -->
+        <canvas id="gameCanvas" width="700" height="500"></canvas>
+        
+        <!-- Start Multiplayer Game -->
+        <button id="btnCreate">New Game</button>
+        <button id="btnJoin">Join Game</button>
+        <input type="text" id="txtGameId">
+        <div id="divPlayers"></div>
+        <div id="divBoard"></div>
+
+        <!-- connect to websocket upon initial opening of the browser-->
+        <script src="game.js"></script>
+    </div>
+</body>
+</html>
