@@ -21,16 +21,16 @@ const wss = new Server({ server });
 const http = require('http');
 
 // serve this page on another port with express
-const INDEX = '/client/index.html';
+const INDEX = '/public/index.html';
 const PORT = process.env.PORT || 9090;
 const express = require('express');
 const app = express();
-// app.get('/', (req, res) => res.sendFile(__dirname + '/client/index.html'));
+// app.get('/', (req, res) => res.sendFile(__dirname + '/public/index.html'));
 app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
 app.listen(9091, () => console.log('Listening on http port 9091'));
 
-// app.use(express.static('client'));
-app.use(express.static(__dirname + '/client'));
+// app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
 const websocketServer = require('websocket').server;
 const httpServer = http.createServer();
