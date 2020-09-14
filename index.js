@@ -27,7 +27,7 @@ const express = require('express');
 const app = express();
 // app.get('/', (req, res) => res.sendFile(__dirname + '/public/index.html'));
 app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
-app.listen(9000, () => console.log(`Listening on http port ${9000}`));
+app.listen(80, () => console.log(`Listening on http port ${80}`));
 
 // app.use(express.static('public'));
 app.use(express.static(__dirname + '/public'));
