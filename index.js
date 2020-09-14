@@ -27,14 +27,14 @@ const express = require('express');
 const app = express();
 // app.get('/', (req, res) => res.sendFile(__dirname + '/public/index.html'));
 app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
-app.listen(PORT, () => console.log(`Listening on http port ${PORT}`));
+app.listen(80, () => console.log(`Listening on http port ${80}`));
 
 // app.use(express.static('public'));
 app.use(express.static(__dirname + '/public'));
 
 const websocketServer = require('websocket').server;
 const httpServer = http.createServer();
-httpServer.listen(80, () => console.log(`listening on ${80}`));
+httpServer.listen(PORT, () => console.log(`listening on ${PORT}`));
 
 let color = 'blue';
 
