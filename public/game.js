@@ -37,9 +37,9 @@ let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
 let HOST = location.origin.replace(/^http/, 'ws').replace(/^https/, 'ws');
 
 console.log('location: ', location);
-// console.log('HOST: ', HOST);
+console.log('HOST: ', `${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 // let ws = new WebSocket(HOST);
-let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com:8080`);
+let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
