@@ -30,7 +30,7 @@ let gameId = null;
 let playerColor = 'blue';
 
 
-// let port = parseInt(location.port)-1;
+let port = parseInt(location.port);
 let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
 // let protocol = location.href.replace('http://', 'ws://').replace('https://', 'wss://') + '/to/ws';
 // let hostname = location.hostname;

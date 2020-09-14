@@ -1,23 +1,3 @@
-/* * from [Heroku](https://devcenter.heroku.com/articles/node-websockets)
-const express = require('express');
-const { Server } = require('ws');
-
-const PORT = process.env.PORT || 3000;
-const INDEX = '/index.html';
-
-const server = express()
-  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-const wss = new Server({ server });
-*/
-// const PORT = process.env.PORT || 3000;
-// const INDEX = '/index.html';
-
-// const server = express()
-// .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
-// .listen(PORT, () => console.log(`Listening on ${PORT}`));
-
 const http = require('http');
 
 // serve this page on another port with express
@@ -25,11 +5,10 @@ const INDEX = '/public/index.html';
 const PORT = process.env.PORT || 80;
 const express = require('express');
 const app = express();
-// app.get('/', (req, res) => res.sendFile(__dirname + '/public/index.html'));
+
 app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
 app.listen(PORT, () => console.log(`Listening on http port ${PORT}`));
 
-// app.use(express.static('public'));
 app.use(express.static(__dirname + '/public'));
 
 const websocketServer = require('websocket').server;
