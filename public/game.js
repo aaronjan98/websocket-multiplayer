@@ -1,7 +1,7 @@
 let canvas;
 let canvasContext;
 let ballX = 345;
-let ballY = 295;
+let ballY = 250;
 let ballSpeedX = 0;
 let ballSpeedY = 0;
 
@@ -22,7 +22,7 @@ var multiplayerMode = false;
 var redIsServing = false;
 var sendBallSpeedX = false;
 var sendPlayAgain = false;
-var mousePosBlue;
+var mousePosBlue = {x: 250, y: 250};
 var mousePosRed;
 
 let clientId = null;
