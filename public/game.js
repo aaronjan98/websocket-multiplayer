@@ -32,7 +32,8 @@ let playerColor = 'blue';
 let port = parseInt(location.port)-1;
 let protocol = location.protocol.replace(/^http/, 'ws');
 let hostname = location.hostname;
-let HOST = `${protocol}//${hostname}:${port}`;
+// let HOST = `${protocol}//${hostname}:${port}`;
+let HOST = `${protocol}//${hostname}`;
 
 console.log('location: ', location);
 console.log('HOST: ', HOST);
