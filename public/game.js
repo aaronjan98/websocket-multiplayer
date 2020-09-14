@@ -34,7 +34,10 @@ let protocol = location.protocol.replace(/^http/, 'ws');
 let hostname = location.hostname;
 let HOST = `${protocol}//${hostname}:${port}`;
 
-let ws = new WebSocket(HOST);
+console.log('location: ', location);
+console.log('HOST: ', HOST);
+// let ws = new WebSocket(HOST);
+let ws = new WebSocket('https://websocket-multiplayer-pong.herokuapp.com/');
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
