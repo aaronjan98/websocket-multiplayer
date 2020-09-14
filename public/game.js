@@ -30,15 +30,14 @@ let gameId = null;
 let playerColor = 'blue';
 
 let port = parseInt(location.port)-1;
-let protocol = location.protocol.replace(/^http/, 'ws');
+let protocol = location.protocol.replace(/^https/, 'ws');
 let hostname = location.hostname;
-// let HOST = `${protocol}//${hostname}:${port}`;
-let HOST = `${protocol}//${hostname}`;
+let HOST = `${protocol}//${hostname}:${port}`;
 
 console.log('location: ', location);
 console.log('HOST: ', HOST);
-let ws = new WebSocket(HOST);
-// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com/`);
+// let ws = new WebSocket(HOST);
+let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com:${port}`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
