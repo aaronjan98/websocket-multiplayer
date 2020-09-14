@@ -7,7 +7,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
-app.listen(config.port, () => console.log(`Listening on http port ${config.port}`));
+app.listen(8080, () => console.log(`Listening on http port ${8080}`));
 
 app.use(express.static(__dirname + '/public'));
 
