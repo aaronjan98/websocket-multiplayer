@@ -7,7 +7,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
-app.listen(PORT, () => console.log(`Listening on http port ${PORT}`));
+app.listen(config.port, () => console.log(`Listening on http port ${config.port}`));
 
 app.use(express.static(__dirname + '/public'));
 
@@ -130,6 +130,8 @@ wsServer.on('request', request => {
             games[gameId].state = state;
         }
     })
+
+    connection.on('exit', code => console.log(`About to exit with code: ${code}`));
 
     // generate a new clientId
     const clientId = guid();
