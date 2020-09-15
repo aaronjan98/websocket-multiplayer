@@ -22,3 +22,94 @@ html, body {
     font-size: 40px;
     color: black;
 }
+
+.container .multiplayer {
+    display: flex;
+    width: 100%;
+    margin: 10px;
+    justify-content: center;
+}
+
+.container .multiplayer .multiplayer-item {
+    display: flex;
+    justify-content: center;
+    margin: 0 10px;
+}
+
+.btn {
+    box-sizing: border-box;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    background-color: transparent;
+    border: 2px solid #e74c3c;
+    border-radius: 0.4em;
+    color: #e74c3c;
+    cursor: pointer;
+    display: -webkit-box;
+    display: flex;
+    align-self: center;
+    font-size: 0.8rem;
+    font-weight: 400;
+    line-height: 1;
+    margin: 10px;
+    padding: 1em 1.8em;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+}
+.btn:hover, .btn:focus {
+    color: black;
+    outline: 0;
+}
+.third {
+    border-color: #3498db;
+    color: black;
+    box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+    -webkit-transition: all 150ms ease-in-out;
+    transition: all 150ms ease-in-out;
+}
+.third:hover {
+    box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
+}
+
+.col-3{
+    float: left; 
+    width: 25%;
+    display: flex;
+    margin: 0px 3%; 
+    position: relative;
+} /* necessary to give position: relative to parent. */
+
+input[type="text"]{
+    outline: none;
+    display: flex;
+    font: 15px/24px "Lato", Arial, sans-serif; 
+    color: black; 
+    width: 100%; 
+    box-sizing: border-box; 
+    letter-spacing: 1px;
+}
+
+.effect-1{
+    border: 0; 
+    background-color: #9420C0; 
+    padding: 7px 0; 
+    border-bottom: 2px solid #3498db;
+}
+
+.effect-1 ~ .focus-border{
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    width: 0; 
+    height: 2px; 
+    background-color: #1a8cff; 
+    transition: 0.4s;
+}
+.effect-1:focus ~ .focus-border{
+    width: 100%; 
+    transition: 0.4s;
+}

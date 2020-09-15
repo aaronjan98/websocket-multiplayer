@@ -29,7 +29,6 @@ let clientId = null;
 let gameId = null;
 let playerColor = 'blue';
 
-
 let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
 
 // let ws = new WebSocket('ws://localhost:80');

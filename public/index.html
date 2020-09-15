@@ -15,9 +15,14 @@
         <canvas id="gameCanvas" width="700" height="500"></canvas>
         
         <!-- Start Multiplayer Game -->
-        <button id="btnCreate">New Game</button>
-        <button id="btnJoin">Join Game</button>
-        <input type="text" id="txtGameId">
+        <div class="multiplayer">
+            <button class="multiplayer-item btn third" id="btnCreate">New Game</button>
+            <div class="col-3">
+                <input class="multiplayer-item effect-1" type="text" id="txtGameId">
+                <span class="focus-border"></span>
+            </div>
+            <button class="multiplayer-item btn third" id="btnJoin">Join Game</button>
+        </div>
         <div id="divPlayers"></div>
         <div id="divBoard"></div>
 
