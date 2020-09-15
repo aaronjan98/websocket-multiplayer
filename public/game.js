@@ -113,7 +113,6 @@ ws.onmessage = message => {
     // update
     if (response.method === 'update') {
         // use information from this response from the server to update the game to match the changes that my other opponent made
-
         let cstate = response.game;
 
         // updating paddle position for player who didn't move that paddle
@@ -437,9 +436,10 @@ function ballReset() {
 } // ballReset()
 
 function drawEverything() {
+
     // blanks the screen black
     colorRect(0, 0, canvas.width, canvas.height, 'black');
-    
+
     // blacks the screen at the end of the game and tells who won
     if(scoreBoard) {
         canvasContext.fillStyle = 'pink';
@@ -494,7 +494,7 @@ function drawEverything() {
         }
     }
 
-    drawNet();
+    // drawNet();
     
     // draws the ball
     // the puck's position will be updated above when this information is transferred through update method
@@ -510,14 +510,8 @@ function drawEverything() {
     canvasContext.fillText(player2Score, canvas.width - 130, 100);
 
     colorCircle(ballX, ballY, 10, 'yellow');
-    // no shadow
-    canvasContext.shadowColor = null;
-    canvasContext.shadowBlur = 0;
-    canvasContext.shadowOffsetX = 0;
-    canvasContext.shadowOffsetY = 0;
 
-    // box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
-    
+
     //left player paddle
     colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , 'blue');
     
@@ -582,11 +576,24 @@ function drawNet() {
 }
 
 function colorRect(leftX, topY, width, height, drawColor) {
-    canvasContext.beginPath();
-    canvasContext.lineCap = "round";
+    canvasContext.shadowColor = '#009DFF';
+    canvasContext.shadowBlur = 50;
+    canvasContext.shadowOffsetX = 1;
+    canvasContext.shadowOffsetY = 1;
+    
+    canvasContext.globalCompositeOperation='source-over';
+    canvasContext.rect(1, 1, 698, 498);
+    canvasContext.fillStyle = "#9420C0";
+    canvasContext.fill();
+    canvasContext.lineWidth = 5;
+    canvasContext.strokeStyle = "#3498db";
+    canvasContext.stroke();
 
-    canvasContext.fillStyle = drawColor;
-    canvasContext.fillRect(leftX, topY, width, height);
+    // no shadow
+    canvasContext.shadowColor = null;
+    canvasContext.shadowBlur = 0;
+    canvasContext.shadowOffsetX = 0;
+    canvasContext.shadowOffsetY = 0;
 }
 
 function colorPaddle(width, topX, topY, bottomX, bottomY, color) {
@@ -606,10 +613,17 @@ function colorCircle(centerX, centerY, radius, drawColor) {
     canvasContext.shadowBlur = topAmountOfShadow*2;
     canvasContext.shadowOffsetX = -ballSpeedX;
     canvasContext.shadowOffsetY = -ballSpeedY;
+
     canvasContext.fillStyle = drawColor;
     canvasContext.beginPath();
     canvasContext.arc(centerX, centerY, radius, 0, Math.PI*2, true);
     canvasContext.fill();
+
+    // no shadow
+    canvasContext.shadowColor = null;
+    canvasContext.shadowBlur = 0;
+    canvasContext.shadowOffsetX = 0;
+    canvasContext.shadowOffsetY = 0;
 }
 
 // Since Async Clipboard API is not supported for all browser!
