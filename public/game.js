@@ -108,11 +108,6 @@ ws.onmessage = message => {
                 playerColor = c.color;
             }
         });
-
-        /*    Put things here if you want to render
-        \*    a page, to a black screen w/ your name
-        \*    and the other player who just connected
-         */
     }
 
     // update
@@ -129,6 +124,10 @@ ws.onmessage = message => {
             sendPlayAgain = cstate.sendPlayAgain;
         } else if (playerColor === 'red') {
             paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
+            //? why isn't ballSpeedY needed?
+            // update ball position and speed
+            ballX = cstate.ballX;
+            ballY = cstate.ballY;
             ballSpeedX = cstate.ballSpeedX;
             player1Score = cstate.player1Score;
             player2Score = cstate.player2Score;
@@ -138,9 +137,6 @@ ws.onmessage = message => {
         
         redIsServing = cstate.redIsServing;
 
-        // update ball position and speed
-        ballX = cstate.ballX;
-        ballY = cstate.ballY;
     }
 }
 
@@ -514,7 +510,14 @@ function drawEverything() {
     canvasContext.fillText(player2Score, canvas.width - 130, 100);
 
     colorCircle(ballX, ballY, 10, 'yellow');
+    // no shadow
+    canvasContext.shadowColor = null;
+    canvasContext.shadowBlur = 0;
+    canvasContext.shadowOffsetX = 0;
+    canvasContext.shadowOffsetY = 0;
 
+    // box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+    
     //left player paddle
     colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , 'blue');
     
@@ -597,6 +600,12 @@ function colorPaddle(width, topX, topY, bottomX, bottomY, color) {
 }
 
 function colorCircle(centerX, centerY, radius, drawColor) {
+    // shadow
+    canvasContext.shadowColor = '#ff6200';
+    let topAmountOfShadow = Math.abs(ballSpeedX) + Math.abs(ballSpeedY);
+    canvasContext.shadowBlur = topAmountOfShadow*2;
+    canvasContext.shadowOffsetX = -ballSpeedX;
+    canvasContext.shadowOffsetY = -ballSpeedY;
     canvasContext.fillStyle = drawColor;
     canvasContext.beginPath();
     canvasContext.arc(centerX, centerY, radius, 0, Math.PI*2, true);
