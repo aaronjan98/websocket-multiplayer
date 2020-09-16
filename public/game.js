@@ -20,6 +20,7 @@ const PADDLE_HEIGHT = 90;
 var scoreBoard = false;
 var multiplayerMode = false;
 var redIsServing = false;
+var blueIsServing = true;
 var sendBallSpeedX = false;
 var sendPlayAgain = false;
 var mousePosBlue = {x: 250, y: 250};
@@ -155,6 +156,17 @@ window.onload = function() {
         canvas.removeEventListener('click', redServes);
     }
 
+    function blueServes(evt) {
+        console.log('blue clicked to serve');
+        blueIsServing = false;
+        ballSpeedX = -4;
+        function getRandomNumberBetween(min,max){
+            return Math.floor(Math.random()*(max-min+1)+min);
+        }
+        ballSpeedY = getRandomNumberBetween(-4, 4);
+        canvas.removeEventListener('click', blueServes);
+    }
+
     setInterval(function() {
         moveEverything();
         playMethod();
@@ -162,6 +174,10 @@ window.onload = function() {
 
         if (playerColor === 'red' && redIsServing && !scoreBoard) {
             canvas.addEventListener('click', redServes);
+        };
+        if (playerColor === 'blue' && blueIsServing) {
+            ballY = mousePosBlue.y;
+            canvas.addEventListener('click', blueServes);
         };
     }, 1000 / framesPerSecond );
 
@@ -182,25 +198,6 @@ window.onload = function() {
 
     // position of the ball before the initial serve
     ballX = (25 + PADDLE_THICKNESS);
-
-    let puckResetPosition = function(evt) {
-        ballY = mousePosBlue.y;
-    };
-
-    let shootBall = function(evt) {
-        ballSpeedX = -4;
-        function getRandomNumberBetween(min,max){
-            return Math.floor(Math.random()*(max-min+1)+min);
-        }
-        ballSpeedY = getRandomNumberBetween(-4, 4);
-        canvas.removeEventListener('mousemove', puckResetPosition);
-        canvas.removeEventListener('click', shootBall);
-    };
-    
-    if (playerColor === 'blue' && !scoreBoard && !multiplayerMode) {
-        canvas.addEventListener('click', shootBall);
-        canvas.addEventListener('mousemove', puckResetPosition);
-    }
 } // window onload
 
 function moveEverything() {
@@ -409,29 +406,30 @@ function ballReset() {
         }
     // hold the puck until you click to serve
     } else if (ballSpeedX >= 0){ // paddle 1 scored
+        blueIsServing = true;
         ballSpeedX = 0;
         ballX = (25 + PADDLE_THICKNESS);
 
         ballY = mousePosBlue.y;
 
-        let mouseMoveBall = function(evt) {
-            ballY = mousePosBlue.y;
-        };
+        // let mouseMoveBall = function(evt) {
+        //     ballY = mousePosBlue.y;
+        // };
 
-        let shootBall = function(evt) {
-            ballSpeedX = -4;
-            function getRandomNumberBetween(min,max){
-                return Math.floor(Math.random()*(max-min+1)+min);
-            }
-            ballSpeedY = getRandomNumberBetween(-4, 4);
-            canvas.removeEventListener('mousemove', mouseMoveBall);
-            canvas.removeEventListener('click', shootBall);
-        };
+        // let shootBall = function(evt) {
+        //     ballSpeedX = -4;
+        //     function getRandomNumberBetween(min,max){
+        //         return Math.floor(Math.random()*(max-min+1)+min);
+        //     }
+        //     ballSpeedY = getRandomNumberBetween(-4, 4);
+        //     canvas.removeEventListener('mousemove', mouseMoveBall);
+        //     canvas.removeEventListener('click', shootBall);
+        // };
         
-        if (playerColor === 'blue') {
-            canvas.addEventListener('click', shootBall);
-            canvas.addEventListener('mousemove', mouseMoveBall);
-        }
+        // if (playerColor === 'blue') {
+        //     canvas.addEventListener('click', shootBall);
+        //     canvas.addEventListener('mousemove', mouseMoveBall);
+        // }
     }
 } // ballReset()
 
