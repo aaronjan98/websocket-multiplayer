@@ -207,9 +207,13 @@ function moveEverything() {
 
     // put logic to decide which player controls what paddle
     if (playerColor === 'blue') {
-        paddle1Y = mousePosBlue.y - (PADDLE_HEIGHT/2);
+        if (mousePosBlue !== undefined) {
+            paddle1Y = mousePosBlue.y - (PADDLE_HEIGHT/2);
+        }
     } else if (playerColor === 'red') {
-        paddle2Y = mousePosRed.y - (PADDLE_HEIGHT/2);
+        if (mousePosRed !== undefined) {
+            paddle2Y = mousePosRed.y - (PADDLE_HEIGHT/2);
+        }
     }
     
     if(!multiplayerMode) {
