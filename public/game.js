@@ -37,8 +37,8 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.msRequestAnimationFrame;
 
-let ws = new WebSocket('ws://localhost:80');
-// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
+// let ws = new WebSocket('ws://localhost:80');
+let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
@@ -49,18 +49,15 @@ const divBoard = document.getElementById('divBoard');
 
 // wiring events
 btnCreate.addEventListener('click', e => {
-
     const payload = {
         'method': 'create',
         'clientId': clientId
     }
 
     ws.send(JSON.stringify(payload));
-    
 })
 
 btnJoin.addEventListener('click', e => {
-
     if (gameId == null) {
         gameId  = txtGameId.value
     }
@@ -105,13 +102,10 @@ ws.onmessage = message => {
             ballY = 250;
             ballSpeedX = 0;
             ballSpeedY = 0;
-            
             player1Score = 0;
             player2Score = 0;
-            
             paddle1Y = 250;
             paddle2Y = 250;
-            
             scoreBoard = false;
             redIsServing = false;
             blueIsServing = true;

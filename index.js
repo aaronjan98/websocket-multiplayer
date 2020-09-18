@@ -63,11 +63,10 @@ wsServer.on('request', request => {
 
             try {
                 if ((game[clients]).length > 2) {
-                    // two players max
                     alert('No more than two players is allowed.');
                 }
             } catch {
-                // pass
+                alert('Failed to join a multi-player game.');
             }
 
             color = {'0': 'blue', '1': 'red'}[game.clients.length];
@@ -149,8 +148,7 @@ wsServer.on('request', request => {
 });
 
 function updateGameState(){
-
-    //{"gameid", fasdfsf}
+    // {"gameId", fasdfsf}
     for (const g of Object.keys(games)) {
         const game = games[g];
 
