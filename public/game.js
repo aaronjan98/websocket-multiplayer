@@ -379,15 +379,14 @@ function ballReset() {
             ballY = canvas.height / 2;
         }
 
-        let computerServe = function(evt) {
-            ballSpeedX = 4;
-        };
-        
-        // only have robo serve when single player
-        if (multiplayerMode) {
-            // set this to true so that the click event handler for the red player to serve meets the condition
-            redIsServing = true;
-        } else if (!multiplayerMode) {
+        // set this to true so that the click event handler for the red player to serve meets the condition
+        redIsServing = true;
+
+        if (!multiplayerMode && !scoreBoard) {
+            let computerServe = function(evt) {
+                ballSpeedX = 4;
+            };
+            
             setTimeout(() => {
                 function getRandomNumberBetween(min,max){
                     return Math.floor(Math.random()*(max-min+1)+min);
@@ -421,7 +420,7 @@ function drawEverything() {
     // draws the ball
     // the puck's position will be updated above when this information is transferred through update method
     // only the logic dealing with changing the puck's position and velocity should be conditioned to only execute with one player
-    if (redIsServing && playerColor === 'blue') {
+    if (redIsServing && playerColor === 'blue' && multiplayerMode) {
         ballY = mousePosRed.y;
     } else if (blueIsServing && playerColor === 'blue') {
         ballY = mousePosBlue.y;
@@ -495,8 +494,24 @@ function handleMouseClick(evt) {
     player1Score = 0;
     player2Score = 0;
     scoreBoard = false;
-
+    
     canvas.removeEventListener('click', handleMouseClick);
+
+    // setTimeout for robo to shoot starts after scoreBoard is exited
+    if (!multiplayerMode && redIsServing) {
+        let computerServe = function(evt) {
+            ballSpeedX = 4;
+        };
+        
+        setTimeout(() => {
+            function getRandomNumberBetween(min,max){
+                return Math.floor(Math.random()*(max-min+1)+min);
+            }
+            ballSpeedY = getRandomNumberBetween(-4, 4);
+            
+            computerServe();
+        }, 1500);
+    }
 }
     
 function computerMovement() {
