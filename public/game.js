@@ -98,15 +98,27 @@ ws.onmessage = message => {
         console.log('response when joining: ', response);
         const game = response.game;
 
-        // doing this to prevent premature requests of update method
-        if(game.clients.length === 2) {
+        // resetting game state for multiplayer
+        if (game.clients.length === 2) {
             multiplayerMode = true;
-            // reset game
+            ballX = (25 + PADDLE_THICKNESS);
+            ballY = 250;
+            ballSpeedX = 0;
+            ballSpeedY = 0;
+            
             player1Score = 0;
             player2Score = 0;
-            ballSpeedX = 0;
+            
+            paddle1Y = 250;
+            paddle2Y = 250;
+            
             scoreBoard = false;
-            ballReset();
+            redIsServing = false;
+            blueIsServing = true;
+            sendBallSpeedX = false;
+            sendPlayAgain = false;
+            mousePosBlue = {x: 250, y: 250};
+            mousePosRed = {x: 250, y: 250};
         }
 
         // while divPlayers is empty, remove all the elements
