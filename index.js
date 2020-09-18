@@ -3,17 +3,18 @@ const http = require('http');
 // serve this page on another port with express
 const INDEX = '/public/index.html';
 const PORT = process.env.PORT || 80;
+let appListenPort = 3000;
 const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => res.sendFile(INDEX, { root: __dirname }))
-app.listen(8080, () => console.log(`Listening on http port ${8080}`));
+app.listen(appListenPort, () => console.log(`App's listening on http port ${appListenPort}`));
 
 app.use(express.static(__dirname + '/public'));
 
 const websocketServer = require('websocket').server;
 const httpServer = http.createServer();
-httpServer.listen(PORT, () => console.log(`listening on ${PORT}`));
+httpServer.listen(PORT, () => console.log(`http server's listening on port ${PORT}`));
 
 let color = 'blue';
 
