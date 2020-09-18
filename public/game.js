@@ -32,8 +32,13 @@ let playerColor = 'blue';
 
 let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
 
-// let ws = new WebSocket('ws://localhost:80');
-let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
+var requestAnimationFrame = window.requestAnimationFrame ||
+                            window.mozRequestAnimationFrame ||
+                            window.webkitRequestAnimationFrame ||
+                            window.msRequestAnimationFrame;
+
+let ws = new WebSocket('ws://localhost:80');
+// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
@@ -124,8 +129,6 @@ ws.onmessage = message => {
             sendPlayAgain = cstate.sendPlayAgain;
         } else if (playerColor === 'red') {
             paddle1Y = cstate.paddle1Y - (PADDLE_HEIGHT/2);
-            //? why isn't ballSpeedY needed?
-            // update ball position and speed
             ballX = cstate.ballX;
             ballY = cstate.ballY;
             ballSpeedX = cstate.ballSpeedX;
@@ -136,7 +139,6 @@ ws.onmessage = message => {
         }
         
         redIsServing = cstate.redIsServing;
-
     }
 }
 
@@ -148,8 +150,6 @@ window.onload = function() {
     canvasContext = canvas.getContext("2d");
     canvasContext.fillStyle = 'pink';
     canvasContext.font = "70px arcadeclassic";
-
-    var framesPerSecond = 60;
 
     function redServes(evt) {
         sendBallSpeedX = true;
@@ -167,7 +167,7 @@ window.onload = function() {
         canvas.removeEventListener('click', blueServes);
     }
 
-    setInterval(function() {
+    function mainGameLoop() {
         moveEverything();
         playMethod();
         drawEverything();
@@ -179,8 +179,11 @@ window.onload = function() {
             ballY = mousePosBlue.y;
             canvas.addEventListener('click', blueServes);
         };
-    }, 1000 / framesPerSecond );
 
+        requestAnimationFrame(mainGameLoop);
+    };
+
+    mainGameLoop();
 
     canvas.addEventListener('mousemove', function(evt) {
         let eventMousePos = calculateMousePos(evt);
@@ -398,6 +401,7 @@ function ballReset() {
         if (multiplayerMode) {
             // set this to true so that the click event handler for the red player to serve meets the condition
             redIsServing = true;
+            return;
         } else if (!multiplayerMode) {
             setTimeout(() => {
                 function getRandomNumberBetween(min,max){
@@ -415,25 +419,6 @@ function ballReset() {
         ballX = (25 + PADDLE_THICKNESS);
 
         ballY = mousePosBlue.y;
-
-        // let mouseMoveBall = function(evt) {
-        //     ballY = mousePosBlue.y;
-        // };
-
-        // let shootBall = function(evt) {
-        //     ballSpeedX = -4;
-        //     function getRandomNumberBetween(min,max){
-        //         return Math.floor(Math.random()*(max-min+1)+min);
-        //     }
-        //     ballSpeedY = getRandomNumberBetween(-4, 4);
-        //     canvas.removeEventListener('mousemove', mouseMoveBall);
-        //     canvas.removeEventListener('click', shootBall);
-        // };
-        
-        // if (playerColor === 'blue') {
-        //     canvas.addEventListener('click', shootBall);
-        //     canvas.addEventListener('mousemove', mouseMoveBall);
-        // }
     }
 } // ballReset()
 
