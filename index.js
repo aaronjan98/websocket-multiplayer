@@ -106,7 +106,6 @@ wsServer.on('request', request => {
             let state = {};
 
             state = games[gameId].state;
-            state.redIsServing = result.redIsServing;
             state.playerColor = playerColor;
             
             // only update your own puck and paddle state so that you don't affect the other player when the state updates.
@@ -118,6 +117,7 @@ wsServer.on('request', request => {
                 state.paddle1Y = playerPaddle1Y+45;
                 state.player1Score = result.player1Score;
                 state.player2Score = result.player2Score;
+                state.redIsServing = result.redIsServing;
                 state.scoreBoard = result.scoreBoard;
                 state.winner = result.winner;
             } else if (playerColor === 'red') {
