@@ -182,14 +182,14 @@ window.onload = function() {
     function mainGameLoop() {
         moveEverything();
         playMethod();
-        drawEverything();
-
+        
         if (playerColor === 'red' && redIsServing && !scoreBoard) {
             canvas.addEventListener('click', redServes);
         } else if (playerColor === 'blue' && blueIsServing && !scoreBoard) {
             ballY = mousePosBlue.y;
             canvas.addEventListener('click', blueServes);
         };
+        drawEverything();
 
         requestAnimationFrame(mainGameLoop);
     };
@@ -503,8 +503,11 @@ function handleMouseClick(evt) {
     
     canvas.removeEventListener('click', handleMouseClick);
 
+    console.log('red is serving: ', redIsServing);
+    
     // setTimeout for robo to shoot starts after scoreBoard is exited
     if (!multiplayerMode && redIsServing) {
+        console.log('robo served');
         redIsServing = false;
 
         let computerServe = function(evt) {
