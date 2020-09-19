@@ -505,6 +505,8 @@ function handleMouseClick(evt) {
 
     // setTimeout for robo to shoot starts after scoreBoard is exited
     if (!multiplayerMode && redIsServing) {
+        redIsServing = false;
+
         let computerServe = function(evt) {
             ballSpeedX = 4;
         };
