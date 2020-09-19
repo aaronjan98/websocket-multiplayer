@@ -37,8 +37,8 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.msRequestAnimationFrame;
 
-// let ws = new WebSocket('ws://localhost:80');
-let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
+let ws = new WebSocket('ws://localhost:80');
+// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
@@ -58,9 +58,15 @@ btnCreate.addEventListener('click', e => {
 })
 
 btnJoin.addEventListener('click', e => {
+    // retrieve gameId from URL parameters
+    const url = new URL(window.location.href);
+    
     if (gameId == null) {
-        gameId  = txtGameId.value
+        gameId  = url.searchParams.get('gameId');
     }
+
+    console.log('GameId: ', gameId);
+    
     
     const payload = {
         'method': 'join',
@@ -87,13 +93,27 @@ ws.onmessage = message => {
     if (response.method === 'create') {
         gameId = response.game.id;
         console.log('Game successfully created with ID: ' + response.game.id);
-        copyToClipboard(response.game.id);
+
+        // create shareable url for multiplayer game
+        // const myURL = new URL('https://multiplayer-pong.netlify.app/');
+        const myURL = new URL('http://localhost:8080/');
+
+        // myURL.search = `?${gameId}`;
+        myURL.searchParams.set('gameId', gameId);
+    
+        console.log(myURL.href);
+        copyToClipboard(myURL.href);
     }
+    
 
     // join
     if (response.method === 'join') {
         console.log('response when joining: ', response);
         const game = response.game;
+
+
+
+        
 
         // resetting game state for multiplayer
         if (game.clients.length === 2) {
