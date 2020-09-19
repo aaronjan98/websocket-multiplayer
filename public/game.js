@@ -37,8 +37,8 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.msRequestAnimationFrame;
 
-let ws = new WebSocket('ws://localhost:80');
-// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
+// let ws = new WebSocket('ws://localhost:80');
+let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
@@ -60,13 +60,16 @@ btnCreate.addEventListener('click', e => {
 btnJoin.addEventListener('click', e => {
     // retrieve gameId from URL parameters
     const url = new URL(window.location.href);
-    
-    if (gameId == null) {
+
+    // only for red player
+    if (url.search.length) {
         gameId  = url.searchParams.get('gameId');
+    // if there aren't any params, then the player is going to host the game
+    } else if (url.search === '') {
+        gameId = gameId;
     }
 
     console.log('GameId: ', gameId);
-    
     
     const payload = {
         'method': 'join',
@@ -98,10 +101,7 @@ ws.onmessage = message => {
         // const myURL = new URL('https://multiplayer-pong.netlify.app/');
         const myURL = new URL('http://localhost:8080/');
 
-        // myURL.search = `?${gameId}`;
         myURL.searchParams.set('gameId', gameId);
-    
-        console.log(myURL.href);
         copyToClipboard(myURL.href);
     }
     
