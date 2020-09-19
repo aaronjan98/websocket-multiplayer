@@ -107,6 +107,7 @@ ws.onmessage = message => {
         const myURL = new URL('http://localhost:8080/');
 
         myURL.searchParams.set('', gameId);
+        txtGameId.defaultValue = myURL.href;
         copyToClipboard(myURL.href);
 
         joinNewMultiplayerGame();
@@ -120,7 +121,21 @@ ws.onmessage = message => {
         // resetting game state for multiplayer
         if (game.clients.length === 2) {
             multiplayerMode = true;
-
+            ballX = (25 + PADDLE_THICKNESS);
+            ballY = 250;
+            ballSpeedX = 0;
+            ballSpeedY = 0;
+            player1Score = 0;
+            player2Score = 0;
+            paddle1Y = 250;
+            paddle2Y = mousePosRed.y;
+            scoreBoard = false;
+            redIsServing = false;
+            blueIsServing = true;
+            sendBallSpeedX = false;
+            sendPlayAgain = false;
+            mousePosBlue = {x: 250, y: 250};
+            mousePosRed = {x: 250, y: 250};
         }
 
         // while divPlayers is empty, remove all the elements
@@ -167,14 +182,15 @@ ws.onmessage = message => {
 // play
 window.onload = function() {
     // if receiving an invitation link, have the client join automatically
-    if (url.search.length) {
+    // if (url.search.length) {
         const createPayload = {
             'method': 'create',
             'clientId': clientId
         }
 
         ws.send(JSON.stringify(createPayload));
-    }
+    // }
+
 
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
@@ -609,10 +625,7 @@ function colorCircle(centerX, centerY, radius, drawColor) {
 
 // Since Async Clipboard API is not supported for all browser!
 function copyToClipboard(text) {
-    var copyGameId = document.getElementById("txtGameId");
-    copyGameId.textContent = text;
-    
-    navigator.clipboard.writeText(copyGameId.textContent)
-    .then(() => { console.log(`Copied: ${copyGameId.textContent}`) })
+    navigator.clipboard.writeText(text)
+    .then(() => { console.log(`Copied: ${text}`) })
     .catch((error) => { console.log(`Copy failed! ${error}`) });
 }
