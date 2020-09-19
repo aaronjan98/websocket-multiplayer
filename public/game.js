@@ -28,6 +28,7 @@ var mousePosRed = {x: 250, y: 250};
 
 let clientId = null;
 let gameId = null;
+let game = null;
 let playerColor = 'blue';
 
 let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
@@ -49,27 +50,27 @@ const txtGameId = document.getElementById('txtGameId');
 const divPlayers = document.getElementById('divPlayers');
 const divBoard = document.getElementById('divBoard');
 
-
-
 // wiring events
 btnCreate.addEventListener('click', async _ => {
-    // if there aren't any params, then the blue player should automatically start a multiplayer game for the user experience so that all they have to do is share a link to someone
-    if (url.search === '') {
-        const createPayload = {
-            'method': 'create',
-            'clientId': clientId
-        }
-
-        await ws.send(JSON.stringify(createPayload));
+    const createPayload = {
+        'method': 'create',
+        'clientId': clientId
     }
+
+    await ws.send(JSON.stringify(createPayload));
 })
 
 function joinNewMultiplayerGame() {
+    // if (game.clients.length >= 2) {
+    //     ws.close();
+    //     gameId = gameId;
+    // }
+
     // only for red player
     if (url.search.length) {
         gameId  = url.searchParams.get('');
     // if there aren't any params, then the player is going to host the game
-    } else {
+    } else if (url.search.length === 0) {
         gameId = gameId;
     }
 
@@ -114,26 +115,12 @@ ws.onmessage = message => {
     // join
     if (response.method === 'join') {
         console.log('response when joining: ', response);
-        const game = response.game;
+        game = response.game;
 
         // resetting game state for multiplayer
         if (game.clients.length === 2) {
             multiplayerMode = true;
-            ballX = (25 + PADDLE_THICKNESS);
-            ballY = 250;
-            ballSpeedX = 0;
-            ballSpeedY = 0;
-            player1Score = 0;
-            player2Score = 0;
-            paddle1Y = 250;
-            paddle2Y = 250;
-            scoreBoard = false;
-            redIsServing = false;
-            blueIsServing = true;
-            sendBallSpeedX = false;
-            sendPlayAgain = false;
-            mousePosBlue = {x: 250, y: 250};
-            mousePosRed = {x: 250, y: 250};
+
         }
 
         // while divPlayers is empty, remove all the elements

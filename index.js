@@ -44,7 +44,23 @@ wsServer.on('request', request => {
             games[gameId] = {
                 'id': gameId,
                 'clients': [],
-                'state': {}
+                'state': {
+                    'ballX': 35,
+                    'ballY': 250,
+                    'ballSpeedX': 0,
+                    'ballSpeedY': 0,
+                    'player1Score': 0,
+                    'player2Score': 0,
+                    'paddle1Y': 250,
+                    'paddle2Y': 250,
+                    'scoreBoard': false,
+                    'redIsServing': false,
+                    'blueIsServing': true,
+                    'sendBallSpeedX': false,
+                    'sendPlayAgain': false,
+                    'mousePosBlue': {x: 250, y: 250},
+                    'mousePosRed': {x: 250, y: 250}
+                }
             }
 
             const payload = {
