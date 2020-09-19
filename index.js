@@ -2,8 +2,8 @@ const http = require('http');
 
 // serve this page on another port with express
 const INDEX = '/public/index.html';
-const PORT = process.env.PORT || 80;
-let appListenPort = 3000;
+const PORT = process.env.PORT || 8080;
+let appListenPort = 80;
 const express = require('express');
 const app = express();
 
