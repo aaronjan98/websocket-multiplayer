@@ -31,14 +31,16 @@ let gameId = null;
 let playerColor = 'blue';
 
 let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
+// retrieve gameId from URL parameters
+const url = new URL(window.location.href);
 
 var requestAnimationFrame = window.requestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.msRequestAnimationFrame;
 
-// let ws = new WebSocket('ws://localhost:80');
-let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
+let ws = new WebSocket('ws://localhost:80');
+// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
@@ -47,38 +49,40 @@ const txtGameId = document.getElementById('txtGameId');
 const divPlayers = document.getElementById('divPlayers');
 const divBoard = document.getElementById('divBoard');
 
-// wiring events
-btnCreate.addEventListener('click', e => {
-    const payload = {
-        'method': 'create',
-        'clientId': clientId
-    }
 
-    ws.send(JSON.stringify(payload));
+
+// wiring events
+btnCreate.addEventListener('click', async _ => {
+    // if there aren't any params, then the blue player should automatically start a multiplayer game for the user experience so that all they have to do is share a link to someone
+    if (url.search === '') {
+        const createPayload = {
+            'method': 'create',
+            'clientId': clientId
+        }
+
+        await ws.send(JSON.stringify(createPayload));
+    }
 })
 
-btnJoin.addEventListener('click', e => {
-    // retrieve gameId from URL parameters
-    const url = new URL(window.location.href);
-
+function joinNewMultiplayerGame() {
     // only for red player
     if (url.search.length) {
-        gameId  = url.searchParams.get('gameId');
+        gameId  = url.searchParams.get('');
     // if there aren't any params, then the player is going to host the game
-    } else if (url.search === '') {
+    } else {
         gameId = gameId;
     }
 
     console.log('GameId: ', gameId);
     
-    const payload = {
+    const joinPayload = {
         'method': 'join',
         'clientId': clientId,
         'gameId': gameId
     }
 
-    ws.send(JSON.stringify(payload));           
-})
+    ws.send(JSON.stringify(joinPayload));
+};
 
 // when the server sends the client a message
 ws.onmessage = message => {
@@ -101,19 +105,16 @@ ws.onmessage = message => {
         // const myURL = new URL('https://multiplayer-pong.netlify.app/');
         const myURL = new URL('http://localhost:8080/');
 
-        myURL.searchParams.set('gameId', gameId);
+        myURL.searchParams.set('', gameId);
         copyToClipboard(myURL.href);
+
+        joinNewMultiplayerGame();
     }
-    
 
     // join
     if (response.method === 'join') {
         console.log('response when joining: ', response);
         const game = response.game;
-
-
-
-        
 
         // resetting game state for multiplayer
         if (game.clients.length === 2) {
@@ -178,6 +179,16 @@ ws.onmessage = message => {
 
 // play
 window.onload = function() {
+    // if receiving an invitation link, have the client join automatically
+    if (url.search.length) {
+        const createPayload = {
+            'method': 'create',
+            'clientId': clientId
+        }
+
+        ws.send(JSON.stringify(createPayload));
+    }
+
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
     canvasContext.fillStyle = 'pink';
@@ -611,19 +622,10 @@ function colorCircle(centerX, centerY, radius, drawColor) {
 
 // Since Async Clipboard API is not supported for all browser!
 function copyToClipboard(text) {
-    var textArea = document.createElement("textarea");
-    textArea.value = text
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-  
-    try {
-      var successful = document.execCommand('copy');
-      var msg = successful ? 'successful' : 'unsuccessful';
-      console.log('Copying text command was ' + msg);
-    } catch (err) {
-      console.log('Oops, unable to copy');
-    }
-  
-    document.body.removeChild(textArea);
+    var copyGameId = document.getElementById("txtGameId");
+    copyGameId.textContent = text;
+    
+    navigator.clipboard.writeText(copyGameId.textContent)
+    .then(() => { console.log(`Copied: ${copyGameId.textContent}`) })
+    .catch((error) => { console.log(`Copy failed! ${error}`) });
 }
