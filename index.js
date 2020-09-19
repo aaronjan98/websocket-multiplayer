@@ -2,8 +2,8 @@ const http = require('http');
 
 // serve this page on another port with express
 const INDEX = '/public/index.html';
-const PORT = process.env.PORT || 8080;
-let appListenPort = 80;
+const PORT = process.env.PORT || 80;
+let appListenPort = 8080;
 const express = require('express');
 const app = express();
 
@@ -67,7 +67,7 @@ wsServer.on('request', request => {
                     alert('No more than two players is allowed.');
                 }
             } catch {
-                alert('Failed to join a multi-player game.');
+                // alert('Failed to join a multi-player game.');
             }
 
             color = {'0': 'blue', '1': 'red'}[game.clients.length];
