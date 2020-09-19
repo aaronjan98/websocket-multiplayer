@@ -171,7 +171,7 @@ window.onload = function() {
 
     async function blueServes(evt) {
         blueIsServing = false;
-        ballSpeedX = -4;
+        ballSpeedX = 5;
         function getRandomNumberBetween(min,max){
             return Math.floor(Math.random()*(max-min+1)+min);
         }
@@ -182,7 +182,7 @@ window.onload = function() {
     function mainGameLoop() {
         moveEverything();
         playMethod();
-        
+
         if (playerColor === 'red' && redIsServing && !scoreBoard) {
             canvas.addEventListener('click', redServes);
         } else if (playerColor === 'blue' && blueIsServing && !scoreBoard) {
@@ -236,7 +236,7 @@ function moveEverything() {
     if (playerColor === 'blue') {
         // serving red player's puck
         if (redIsServing && sendBallSpeedX) {
-            ballSpeedX = -4;
+            ballSpeedX = -5;
             function getRandomNumberBetween(min,max){
                 return Math.floor(Math.random()*(max-min+1)+min);
             }
@@ -390,7 +390,7 @@ function ballReset() {
 
         if (!multiplayerMode && !scoreBoard) {
             let computerServe = function(evt) {
-                ballSpeedX = 4;
+                ballSpeedX = 5;
             };
             
             setTimeout(() => {
@@ -511,7 +511,7 @@ function handleMouseClick(evt) {
         redIsServing = false;
 
         let computerServe = function(evt) {
-            ballSpeedX = 4;
+            ballSpeedX = 5;
         };
         
         setTimeout(() => {
