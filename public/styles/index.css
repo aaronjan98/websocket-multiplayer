@@ -25,15 +25,25 @@ html, body {
 
 .container .multiplayer {
     display: flex;
-    width: 100%;
+    width: 720px;
+    height: 40px;
     margin-top: 30px;
     justify-content: center;
+    align-items: center;
 }
 
 .container .multiplayer .multiplayer-item {
     display: flex;
     justify-content: center;
     margin: 0 10px;
+    text-align: center;
+}
+
+.container .multiplayer .invite-overlay {
+    border: 0; 
+    background-color: #584cfa; 
+    display: flex;
+    align-items: center;
 }
 
 .container #gameCanvas {
@@ -47,7 +57,7 @@ html, body {
             appearance: none;
     background-color: transparent;
     border: 2px solid #e74c3c;
-    border-radius: 0.4em;
+    border-radius: 0.2em;
     color: #e74c3c;
     cursor: pointer;
     display: -webkit-box;
@@ -56,11 +66,10 @@ html, body {
     font-size: 0.8rem;
     font-weight: 400;
     line-height: 1;
-    margin: 10px;
-    padding: 1em 1.8em;
+    margin: 10px 0;
+    padding: 0.9em 1.8em;
     text-decoration: none;
     text-align: center;
-    text-transform: uppercase;
     font-family: "Montserrat", sans-serif;
     font-weight: 700;
 }
@@ -68,26 +77,90 @@ html, body {
     color: black;
     outline: 0;
 }
-.third {
-    border-color: #3498db;
+
+.copyBtn {
+    box-sizing: border-box;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    background-color: transparent;
+    border: 2px solid #e74c3c;
+    border-radius: 0px 7px 7px 0px;
+    color: #e74c3c;
+    cursor: pointer;
+    display: -webkit-box;
+    display: flex;
+    align-self: center;
+    font-size: 0.8rem;
+    font-weight: 400;
+    line-height: 1;
+    margin: 10px 0;
+    padding: 0.6em 1.7em;
+    text-decoration: none;
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.copyBtn:hover, .copyBtn:focus {
     color: black;
-    box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+    outline: 0;
+}
+
+.third {
+    border-color: #584cfa;
+    color: black;
+    box-shadow: 0 0 40px 40px #584cfa inset, 0 0 0 0 #584cfa;
     -webkit-transition: all 150ms ease-in-out;
     transition: all 150ms ease-in-out;
 }
 .third:hover {
-    box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
+    box-shadow: 0 0 10px 0 #4336ff inset, 0 0 10px 4px #4336ff;
 }
 
-.col-3{
-    float: left; 
-    width: 25%;
-    display: flex;
-    margin: 0px 3%; 
+.copyBtnStyle {
+    border-color: #4336ff;
+    color: black;
+    box-shadow: 0 0 40px 40px #4336ff inset, 0 0 0 0 #4336ff;
+    -webkit-transition: all 150ms ease-in-out;
+    transition: all 150ms ease-in-out;
+}
+.copyBtnStyle:hover {
+    border-color: #5044fa;
+    box-shadow: 0 0 20px 0 #3122fa inset, 0 0 20px 6px #5246f8;
+}
+
+.invite-input {
     position: relative;
+    width: 100%;
 } /* necessary to give position: relative to parent. */
 
-input[type="text"]{
+.invite-overlay {
+    position: absolute;
+    pointer-events: none;
+    background-color: #3498db;
+    opacity: 1;
+    left: 5px;
+    right: -13px;
+    top: 2px;
+    bottom: 2px;
+    border-radius: 7px 0px 0px 7px;
+    color: black;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    line-height: 28px;
+    transition:all .08s ease-in;
+    display: flex;
+    justify-content: center;
+    margin: 0 6px;
+    text-align: center;
+}
+
+.invite-input:hover .invite-overlay {
+    opacity:0;
+}
+
+input[type="text"] {
     outline: none;
     display: flex;
     font: 15px/24px "Lato", Arial, sans-serif; 
@@ -97,23 +170,16 @@ input[type="text"]{
     letter-spacing: 1px;
 }
 
-.effect-1{
+.effect-1 {
     border: 0; 
     background-color: #9420C0; 
-    padding: 7px 0; 
-    border-bottom: 2px solid #3498db;
+    padding: 7px 0;
+    display: flex;
+    align-self: flex-end;
+    justify-content: flex-start;
+    border-radius: 7px 0px 0px 7px;
 }
 
-.effect-1 ~ .focus-border{
-    position: absolute; 
-    bottom: 0; 
-    left: 0; 
-    width: 0; 
-    height: 2px; 
-    background-color: #1a8cff; 
-    transition: 0.4s;
-}
-.effect-1:focus ~ .focus-border{
-    width: 100%; 
-    transition: 0.4s;
+.multiplayer-item.effect-1 {
+    height: 100%;
 }

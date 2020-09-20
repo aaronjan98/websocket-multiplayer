@@ -45,7 +45,6 @@ let ws = new WebSocket('ws://localhost:80');
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
-const btnJoin = document.getElementById('btnJoin');
 const txtGameId = document.getElementById('txtGameId');
 const divPlayers = document.getElementById('divPlayers');
 const divBoard = document.getElementById('divBoard');

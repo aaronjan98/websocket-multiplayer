@@ -9,19 +9,18 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="pong-title">Pong</h1> 
+        <h1 class="pong-title">Pong</h1>
 
         <!-- Pong Elements -->
         <canvas id="gameCanvas" width="700" height="500"></canvas>
         
         <!-- Start Multiplayer Game -->
         <div class="multiplayer">
-            <button class="multiplayer-item btn third" id="btnCreate">New Game</button>
-            <div class="col-3">
-                <input class="multiplayer-item effect-1" type="text" id="txtGameId" value="" readonly="">
-                <span class="focus-border"></span>
+            <div class="invite-input">
+                <input class="multiplayer-item effect-1 btn third" type="text" id="txtGameId" value="" readonly="">
+                <div class="invite-overlay">Hover over me for the multiplayer invitation link</div>
             </div>
-            <button class="multiplayer-item btn third" id="btnJoin">Join Game</button>
+            <button class="multiplayer-item copyBtn copyBtnStyle" id="btnCreate">copy</button>
         </div>
         <div id="divPlayers"></div>
         <div id="divBoard"></div>
