@@ -33,9 +33,9 @@ wsServer.on('request', async request => {
     connection.on('open', () => console.log('opened'));
     connection.on('close', () => console.log('closed'));
 
-    await connection.on('message', message => {
+    await connection.on('message', async message => {
         // Data that the server receives
-        const result = JSON.parse(message.utf8Data);
+        const result = await JSON.parse(message.utf8Data);
 
         // I have received a message from the client
         // User wants to create a new game
@@ -71,7 +71,7 @@ wsServer.on('request', async request => {
             }
 
             const con = clients[clientId].connection;
-            con.send(JSON.stringify(payload));
+            await con.send(JSON.stringify(payload));
         }
 
         // a client wants to join
