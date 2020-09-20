@@ -27,13 +27,13 @@ const wsServer = new websocketServer({
     'httpServer': httpServer
 });
 
-wsServer.on('request', request => {
+wsServer.on('request', async request => {
     // connect
     const connection = request.accept(null, request.origin);
     connection.on('open', () => console.log('opened'));
     connection.on('close', () => console.log('closed'));
 
-    connection.on('message', message => {
+    await connection.on('message', message => {
         // Data that the server receives
         const result = JSON.parse(message.utf8Data);
 
