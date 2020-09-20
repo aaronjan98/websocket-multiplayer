@@ -178,14 +178,14 @@ ws.onmessage = async message => {
 /****************** Render the entire canvas below ******************/
 
 // play
-window.onload = function() {
+window.onload = async function() {
     // if receiving an invitation link, have the client join automatically
     const createPayload = {
         'method': 'create',
         'clientId': clientId
     }
 
-    ws.send(JSON.stringify(createPayload));
+    await ws.send(JSON.stringify(createPayload));
 
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
