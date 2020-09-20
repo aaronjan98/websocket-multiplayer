@@ -34,14 +34,15 @@ let playerColor = 'blue';
 let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
 // retrieve gameId from URL parameters
 const url = new URL(window.location.href);
+let myURL;
 
 var requestAnimationFrame = window.requestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.msRequestAnimationFrame;
 
-let ws = new WebSocket('ws://localhost:80');
-// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
+// let ws = new WebSocket('ws://localhost:80');
+let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
@@ -49,16 +50,11 @@ const txtGameId = document.getElementById('txtGameId');
 const divPlayers = document.getElementById('divPlayers');
 const divBoard = document.getElementById('divBoard');
 
-// wiring events
 btnCreate.addEventListener('click', async _ => {
-    const createPayload = {
-        'method': 'create',
-        'clientId': clientId
-    }
-
-    await ws.send(JSON.stringify(createPayload));
+    copyToClipboard(myURL.href);
 })
 
+// wiring events
 function joinNewMultiplayerGame() {
     // if (game.clients.length >= 2) {
     //     ws.close();
@@ -102,12 +98,11 @@ ws.onmessage = message => {
         console.log('Game successfully created with ID: ' + response.game.id);
 
         // create shareable url for multiplayer game
-        // const myURL = new URL('https://multiplayer-pong.netlify.app/');
-        const myURL = new URL('http://localhost:8080/');
+        myURL = new URL('https://multiplayer-pong.netlify.app/');
+        // myURL = new URL('http://localhost:8080/');
 
         myURL.searchParams.set('', gameId);
         txtGameId.defaultValue = myURL.href;
-        copyToClipboard(myURL.href);
 
         joinNewMultiplayerGame();
     }
@@ -181,15 +176,12 @@ ws.onmessage = message => {
 // play
 window.onload = function() {
     // if receiving an invitation link, have the client join automatically
-    // if (url.search.length) {
-        const createPayload = {
-            'method': 'create',
-            'clientId': clientId
-        }
+    const createPayload = {
+        'method': 'create',
+        'clientId': clientId
+    }
 
-        ws.send(JSON.stringify(createPayload));
-    // }
-
+    ws.send(JSON.stringify(createPayload));
 
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
