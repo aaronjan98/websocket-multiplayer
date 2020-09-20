@@ -29,7 +29,13 @@ const wsServer = new websocketServer({
 
 wsServer.on('request', async request => {
     // connect
-    const connection = request.accept(null, request.origin);
+    function i_con() {
+        return new Promise((resolve, reject) => resolve(request.accept(null, request.origin)));
+    }
+    
+    let connection = await i_con();
+    
+    
     connection.on('open', () => console.log('opened'));
     connection.on('close', () => console.log('closed'));
 
@@ -163,7 +169,7 @@ wsServer.on('request', async request => {
         'clientId': clientId
     };
     // send back the client connect
-    await connection.send(JSON.stringify(payload));
+    connection.send(JSON.stringify(payload));
 });
 
 function updateGameState(){

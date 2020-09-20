@@ -87,11 +87,23 @@ function joinNewMultiplayerGame() {
 // when the server sends the client a message
 ws.onmessage = async message => {
     // string server sends: message.data
-    const response = await JSON.parse(message.data);
+    function response_fxn() {
+        return new Promise((resolve, reject) => {
+            resolve(JSON.parse(message.data));
+        })
+    }
+
+    const response = await response_fxn();
+
+    function connect_fxn() {
+        return new Promise((resolve, reject) => {
+            resolve(response.clientId);
+        })
+    }
 
     // Connect Method: save clientId in global name space
     if (response.method === 'connect') {
-        clientId = await response.clientId;
+        clientId = await connect_fxn();
         console.log('Client ID set successfully: ' + clientId);
         console.log('connect response: ', response);
     }
