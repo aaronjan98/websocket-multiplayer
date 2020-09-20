@@ -85,21 +85,21 @@ function joinNewMultiplayerGame() {
 };
 
 // when the server sends the client a message
-ws.onmessage = message => {
+ws.onmessage = async message => {
     // string server sends: message.data
-    const response = JSON.parse(message.data);
+    const response = await JSON.parse(message.data);
 
     // Connect Method: save clientId in global name space
     if (response.method === 'connect') {
-        clientId = response.clientId;
+        clientId = await response.clientId;
         console.log('Client ID set successfully: ' + clientId);
         console.log('connect response: ', response);
     }
 
     // create
     if (response.method === 'create') {
-        gameId = response.game.id;
-        console.log('Game successfully created with ID: ' + response.game.id);
+        gameId = await response.game.id;
+        console.log('Game successfully created with ID: ' + gameId);
 
         // create shareable url for multiplayer game
         myURL = new URL('https://multiplayer-pong.netlify.app/');
@@ -114,7 +114,7 @@ ws.onmessage = message => {
     // join
     if (response.method === 'join') {
         console.log('response when joining: ', response);
-        game = response.game;
+        game = await response.game;
 
         // resetting game state for multiplayer
         if (game.clients.length === 2) {
@@ -152,7 +152,7 @@ ws.onmessage = message => {
     // update
     if (response.method === 'update' && multiplayerMode) {
         // use information from this response from the server to update the game to match the changes that my other opponent made
-        let cstate = response.game;
+        let cstate = await response.game;
 
         // updating paddle position for player who didn't move that paddle
         if (playerColor === 'blue') {
