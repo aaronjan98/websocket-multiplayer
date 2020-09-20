@@ -17,6 +17,7 @@ const httpServer = http.createServer();
 httpServer.listen(PORT, () => console.log(`http server's listening on port ${PORT}`));
 
 let color = 'blue';
+let gameId;
 
 // hash map clients
 const clients = {};
@@ -40,11 +41,28 @@ wsServer.on('request', request => {
         // User wants to create a new game
         if (result.method === 'create') {
             const clientId = result.clientId;
-            const gameId = guid();
+            gameId = guid();
             games[gameId] = {
                 'id': gameId,
                 'clients': [],
-                'state': {}
+                'state': {
+                    'ballX': 35,
+                    'ballY': 250,
+                    'ballSpeedX': 0,
+                    'ballSpeedY': 0,
+                    'player1Score': 0,
+                    'player2Score': 0,
+                    'paddle1Y': 250,
+                    'paddle2Y': 250,
+                    'multiplayerMode': false,
+                    'scoreBoard': false,
+                    'redIsServing': false,
+                    'blueIsServing': true,
+                    'sendBallSpeedX': false,
+                    'sendPlayAgain': false,
+                    'mousePosBlue': {x: 250, y: 250},
+                    'mousePosRed': {x: 250, y: 250}
+                }
             }
 
             const payload = {
@@ -59,7 +77,7 @@ wsServer.on('request', request => {
         // a client wants to join
         if (result.method === 'join') {
             const clientId = result.clientId;
-            const gameId = result.gameId;
+            let gameId = result.gameId;
             let game = games[gameId];
 
             try {

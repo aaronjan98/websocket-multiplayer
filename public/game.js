@@ -28,9 +28,14 @@ var mousePosRed = {x: 250, y: 250};
 
 let clientId = null;
 let gameId = null;
+let game = null;
 let playerColor = 'blue';
 
 let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
+// retrieve gameId from URL parameters
+const url = new URL(window.location.href);
+let myURL;
+var paddle2YCenter;
 
 var requestAnimationFrame = window.requestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
@@ -42,34 +47,42 @@ let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
-const btnJoin = document.getElementById('btnJoin');
 const txtGameId = document.getElementById('txtGameId');
 const divPlayers = document.getElementById('divPlayers');
 const divBoard = document.getElementById('divBoard');
 
-// wiring events
-btnCreate.addEventListener('click', e => {
-    const payload = {
-        'method': 'create',
-        'clientId': clientId
-    }
-
-    ws.send(JSON.stringify(payload));
+btnCreate.addEventListener('click', async _ => {
+    copyToClipboard(myURL.href);
 })
 
-btnJoin.addEventListener('click', e => {
-    if (gameId == null) {
-        gameId  = txtGameId.value
+// wiring events
+function joinNewMultiplayerGame() {
+    try {
+
+        if (game.clients.length === 1) {
+            // ws.close();
+            multiplayerMode = false;
+        }
+    } catch (TypeError) {
+        multiplayerMode = false;
     }
-    
-    const payload = {
+
+    // only for red player
+    if (url.search.length) {
+        gameId  = url.searchParams.get('');
+    // if there aren't any params, then the player is going to host the game
+    } else if (url.search.length === 0) {
+        gameId = gameId;
+    }
+
+    const joinPayload = {
         'method': 'join',
         'clientId': clientId,
         'gameId': gameId
     }
 
-    ws.send(JSON.stringify(payload));           
-})
+    ws.send(JSON.stringify(joinPayload));
+};
 
 // when the server sends the client a message
 ws.onmessage = message => {
@@ -87,13 +100,21 @@ ws.onmessage = message => {
     if (response.method === 'create') {
         gameId = response.game.id;
         console.log('Game successfully created with ID: ' + response.game.id);
-        copyToClipboard(response.game.id);
+
+        // create shareable url for multiplayer game
+        myURL = new URL('https://multiplayer-pong.netlify.app/');
+        // myURL = new URL('http://localhost:8080/');
+
+        myURL.searchParams.set('', gameId);
+        txtGameId.defaultValue = myURL.href;
+
+        joinNewMultiplayerGame();
     }
 
     // join
     if (response.method === 'join') {
         console.log('response when joining: ', response);
-        const game = response.game;
+        game = response.game;
 
         // resetting game state for multiplayer
         if (game.clients.length === 2) {
@@ -104,8 +125,8 @@ ws.onmessage = message => {
             ballSpeedY = 0;
             player1Score = 0;
             player2Score = 0;
-            paddle1Y = 250;
-            paddle2Y = 250;
+            paddle1Y = mousePosBlue.y;
+            paddle2Y = mousePosRed.y;
             scoreBoard = false;
             redIsServing = false;
             blueIsServing = true;
@@ -114,7 +135,7 @@ ws.onmessage = message => {
             mousePosBlue = {x: 250, y: 250};
             mousePosRed = {x: 250, y: 250};
         }
-
+        
         // while divPlayers is empty, remove all the elements
         while(divPlayers.firstChild) {
             divPlayers.removeChild(divPlayers.firstChild);
@@ -129,7 +150,7 @@ ws.onmessage = message => {
     }
 
     // update
-    if (response.method === 'update') {
+    if (response.method === 'update' && multiplayerMode) {
         // use information from this response from the server to update the game to match the changes that my other opponent made
         let cstate = response.game;
 
@@ -158,6 +179,14 @@ ws.onmessage = message => {
 
 // play
 window.onload = function() {
+    // if receiving an invitation link, have the client join automatically
+    const createPayload = {
+        'method': 'create',
+        'clientId': clientId
+    }
+
+    ws.send(JSON.stringify(createPayload));
+
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
     canvasContext.fillStyle = 'pink';
@@ -527,9 +556,11 @@ function handleMouseClick(evt) {
     
 function computerMovement() {
     if (scoreBoard) {
+        console.log('computer mm on scoreboard');
         paddle2Y = canvas.height / 2 - (PADDLE_HEIGHT / 2);
     } else {
-        var paddle2YCenter = paddle2Y + (PADDLE_HEIGHT / 2);
+        console.log('computer mm');
+        paddle2YCenter = paddle2Y + (PADDLE_HEIGHT / 2);
         if (paddle2YCenter < ballY) {
             paddle2Y += paddleMovement;
         } else if (paddle2YCenter > ballY) {
@@ -591,19 +622,7 @@ function colorCircle(centerX, centerY, radius, drawColor) {
 
 // Since Async Clipboard API is not supported for all browser!
 function copyToClipboard(text) {
-    var textArea = document.createElement("textarea");
-    textArea.value = text
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-  
-    try {
-      var successful = document.execCommand('copy');
-      var msg = successful ? 'successful' : 'unsuccessful';
-      console.log('Copying text command was ' + msg);
-    } catch (err) {
-      console.log('Oops, unable to copy');
-    }
-  
-    document.body.removeChild(textArea);
+    navigator.clipboard.writeText(text)
+    .then(() => { console.log(`Copied: ${text}`) })
+    .catch((error) => { console.log(`Copy failed! ${error}`) });
 }
