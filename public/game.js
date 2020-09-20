@@ -35,6 +35,7 @@ let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
 // retrieve gameId from URL parameters
 const url = new URL(window.location.href);
 let myURL;
+var paddle2YCenter;
 
 var requestAnimationFrame = window.requestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
@@ -56,10 +57,15 @@ btnCreate.addEventListener('click', async _ => {
 
 // wiring events
 function joinNewMultiplayerGame() {
-    // if (game.clients.length >= 2) {
-    //     ws.close();
-    //     gameId = gameId;
-    // }
+    try {
+
+        if (game.clients.length === 1) {
+            // ws.close();
+            multiplayerMode = false;
+        }
+    } catch (TypeError) {
+        multiplayerMode = false;
+    }
 
     // only for red player
     if (url.search.length) {
@@ -69,8 +75,6 @@ function joinNewMultiplayerGame() {
         gameId = gameId;
     }
 
-    console.log('GameId: ', gameId);
-    
     const joinPayload = {
         'method': 'join',
         'clientId': clientId,
@@ -121,7 +125,7 @@ ws.onmessage = message => {
             ballSpeedY = 0;
             player1Score = 0;
             player2Score = 0;
-            paddle1Y = 250;
+            paddle1Y = mousePosBlue.y;
             paddle2Y = mousePosRed.y;
             scoreBoard = false;
             redIsServing = false;
@@ -131,7 +135,7 @@ ws.onmessage = message => {
             mousePosBlue = {x: 250, y: 250};
             mousePosRed = {x: 250, y: 250};
         }
-
+        
         // while divPlayers is empty, remove all the elements
         while(divPlayers.firstChild) {
             divPlayers.removeChild(divPlayers.firstChild);
@@ -146,7 +150,7 @@ ws.onmessage = message => {
     }
 
     // update
-    if (response.method === 'update') {
+    if (response.method === 'update' && multiplayerMode) {
         // use information from this response from the server to update the game to match the changes that my other opponent made
         let cstate = response.game;
 
@@ -552,9 +556,11 @@ function handleMouseClick(evt) {
     
 function computerMovement() {
     if (scoreBoard) {
+        console.log('computer mm on scoreboard');
         paddle2Y = canvas.height / 2 - (PADDLE_HEIGHT / 2);
     } else {
-        var paddle2YCenter = paddle2Y + (PADDLE_HEIGHT / 2);
+        console.log('computer mm');
+        paddle2YCenter = paddle2Y + (PADDLE_HEIGHT / 2);
         if (paddle2YCenter < ballY) {
             paddle2Y += paddleMovement;
         } else if (paddle2YCenter > ballY) {

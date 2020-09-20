@@ -54,6 +54,7 @@ wsServer.on('request', request => {
                     'player2Score': 0,
                     'paddle1Y': 250,
                     'paddle2Y': 250,
+                    'multiplayerMode': false,
                     'scoreBoard': false,
                     'redIsServing': false,
                     'blueIsServing': true,
