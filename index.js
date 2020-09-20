@@ -163,7 +163,7 @@ wsServer.on('request', async request => {
         'clientId': clientId
     };
     // send back the client connect
-    connection.send(JSON.stringify(payload));
+    await connection.send(JSON.stringify(payload));
 });
 
 function updateGameState(){
