@@ -29,12 +29,11 @@ const wsServer = new websocketServer({
 
 wsServer.on('request', async request => {
     // connect
-    function i_con() {
+    function initial_connection() {
         return new Promise((resolve, reject) => resolve(request.accept(null, request.origin)));
     }
     
-    let connection = await i_con();
-    
+    const connection = await initial_connection();
     
     connection.on('open', () => console.log('opened'));
     connection.on('close', () => console.log('closed'));

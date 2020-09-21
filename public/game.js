@@ -101,9 +101,17 @@ ws.onmessage = async message => {
         })
     }
 
+    async function connect_async_fxn() {
+        try {
+            clientId = await connect_fxn();
+        } catch (error) {
+            console.log("ooops ", error);
+        }
+    }
+
     // Connect Method: save clientId in global name space
     if (response.method === 'connect') {
-        clientId = await connect_fxn();
+        connect_async_fxn();
         console.log('Client ID set successfully: ' + clientId);
         console.log('connect response: ', response);
     }
@@ -190,34 +198,34 @@ ws.onmessage = async message => {
 /****************** Render the entire canvas below ******************/
 
 // play
-window.onload = async function() {
+window.onload = function() {
     // if receiving an invitation link, have the client join automatically
     const createPayload = {
         'method': 'create',
         'clientId': clientId
     }
 
-    await ws.send(JSON.stringify(createPayload));
+    ws.send(JSON.stringify(createPayload));
 
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
     canvasContext.fillStyle = 'pink';
     canvasContext.font = "70px arcadeclassic";
 
-    async function redServes(evt) {
+    function redServes(evt) {
         sendBallSpeedX = true;
         redIsServing = false;
-        await canvas.removeEventListener('click', redServes);
+        canvas.removeEventListener('click', redServes);
     }
 
-    async function blueServes(evt) {
+    function blueServes(evt) {
         blueIsServing = false;
         ballSpeedX = 5;
         function getRandomNumberBetween(min,max){
             return Math.floor(Math.random()*(max-min+1)+min);
         }
         ballSpeedY = getRandomNumberBetween(-4, 4);
-        await canvas.removeEventListener('click', blueServes);
+        canvas.removeEventListener('click', blueServes);
     }
 
     function mainGameLoop() {
@@ -568,10 +576,8 @@ function handleMouseClick(evt) {
     
 function computerMovement() {
     if (scoreBoard) {
-        console.log('computer mm on scoreboard');
         paddle2Y = canvas.height / 2 - (PADDLE_HEIGHT / 2);
     } else {
-        console.log('computer mm');
         paddle2YCenter = paddle2Y + (PADDLE_HEIGHT / 2);
         if (paddle2YCenter < ballY) {
             paddle2Y += paddleMovement;
