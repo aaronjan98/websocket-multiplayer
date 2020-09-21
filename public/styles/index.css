@@ -16,6 +16,19 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
+}
+
+.container .canvas {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .canvas#mouseEventCanvas {
+    width: 100vw;
+    height: 500px;
 }
 
 .container .pong-title {
@@ -30,6 +43,8 @@ html, body {
     margin-top: 30px;
     justify-content: center;
     align-items: center;
+    position: relative;
+    top: 230px;
 }
 
 .container .multiplayer .multiplayer-item {

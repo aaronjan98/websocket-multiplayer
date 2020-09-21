@@ -1,4 +1,5 @@
 let canvas;
+let mouseEventCanvas;
 let canvasContext;
 let ballX = 345;
 let ballY = 250;
@@ -42,8 +43,8 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.msRequestAnimationFrame;
 
-// let ws = new WebSocket('ws://localhost:80');
-let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
+let ws = new WebSocket('ws://localhost:80');
+// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
@@ -128,8 +129,8 @@ ws.onmessage = async message => {
         console.log('Game successfully created with ID: ' + gameId);
 
         // create shareable url for multiplayer game
-        myURL = new URL('https://multiplayer-pong.netlify.app/');
-        // myURL = new URL('http://localhost:8080/');
+        // myURL = new URL('https://multiplayer-pong.netlify.app/');
+        myURL = new URL('http://localhost:8080/');
 
         myURL.searchParams.set('', gameId);
         txtGameId.defaultValue = myURL.href;
@@ -205,6 +206,7 @@ ws.onmessage = async message => {
 
 // play
 window.onload = function() {
+    mouseEventCanvas = document.getElementById('mouseEventCanvas');
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
     canvasContext.fillStyle = 'pink';
@@ -213,7 +215,7 @@ window.onload = function() {
     function redServes(evt) {
         sendBallSpeedX = true;
         redIsServing = false;
-        canvas.removeEventListener('click', redServes);
+        mouseEventCanvas.removeEventListener('click', redServes);
     }
 
     function blueServes(evt) {
@@ -223,7 +225,7 @@ window.onload = function() {
             return Math.floor(Math.random()*(max-min+1)+min);
         }
         ballSpeedY = getRandomNumberBetween(-4, 4);
-        canvas.removeEventListener('click', blueServes);
+        mouseEventCanvas.removeEventListener('click', blueServes);
     }
 
     function mainGameLoop() {
@@ -231,10 +233,10 @@ window.onload = function() {
         playMethod();
 
         if (playerColor === 'red' && redIsServing && !scoreBoard) {
-            canvas.addEventListener('click', redServes);
+            mouseEventCanvas.addEventListener('click', redServes);
         } else if (playerColor === 'blue' && blueIsServing && !scoreBoard) {
             ballY = mousePosBlue.y;
-            canvas.addEventListener('click', blueServes);
+            mouseEventCanvas.addEventListener('click', blueServes);
         };
         drawEverything();
 
@@ -242,7 +244,7 @@ window.onload = function() {
     };
     requestAnimationFrame(mainGameLoop);
 
-    canvas.addEventListener('mousemove', function(evt) {
+    mouseEventCanvas.addEventListener('mousemove', function(evt) {
         let eventMousePos = calculateMousePos(evt);
 
         if (playerColor === 'blue') {
@@ -525,7 +527,7 @@ function drawEverything() {
             scoreBoard = false;
             sendPlayAgain = false;
         }
-        canvas.addEventListener('click', handleMouseClick);
+        mouseEventCanvas.addEventListener('click', handleMouseClick);
     }
 } // drawEverything()
 
@@ -550,7 +552,7 @@ function handleMouseClick(evt) {
     player2Score = 0;
     scoreBoard = false;
     
-    canvas.removeEventListener('click', handleMouseClick);
+    mouseEventCanvas.removeEventListener('click', handleMouseClick);
 
     console.log('red is serving: ', redIsServing);
     
