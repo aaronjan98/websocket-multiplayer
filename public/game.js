@@ -104,6 +104,12 @@ ws.onmessage = async message => {
     async function connect_async_fxn() {
         try {
             clientId = await connect_fxn();
+            // if receiving an invitation link, have the client join automatically
+            const createPayload = {
+                'method': 'create',
+                'clientId': clientId
+            }
+            ws.send(JSON.stringify(createPayload));
         } catch (error) {
             console.log("ooops ", error);
         }
@@ -199,14 +205,6 @@ ws.onmessage = async message => {
 
 // play
 window.onload = function() {
-    // if receiving an invitation link, have the client join automatically
-    const createPayload = {
-        'method': 'create',
-        'clientId': clientId
-    }
-
-    ws.send(JSON.stringify(createPayload));
-
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
     canvasContext.fillStyle = 'pink';
@@ -260,6 +258,8 @@ window.onload = function() {
 
     // position of the ball before the initial serve
     ballX = (25 + PADDLE_THICKNESS);
+
+
 } // window onload
 
 function moveEverything() {
