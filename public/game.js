@@ -43,8 +43,8 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame ||
                             window.msRequestAnimationFrame;
 
-let ws = new WebSocket('ws://localhost:80');
-// let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
+// let ws = new WebSocket('ws://localhost:80');
+let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
 const btnCreate = document.getElementById('btnCreate');
@@ -129,8 +129,8 @@ ws.onmessage = async message => {
         console.log('Game successfully created with ID: ' + gameId);
 
         // create shareable url for multiplayer game
-        // myURL = new URL('https://multiplayer-pong.netlify.app/');
-        myURL = new URL('http://localhost:8080/');
+        myURL = new URL('https://multiplayer-pong.netlify.app/');
+        // myURL = new URL('http://localhost:8080/');
 
         myURL.searchParams.set('', gameId);
         txtGameId.defaultValue = myURL.href;
