@@ -31,6 +31,8 @@ let clientId = null;
 let gameId = null;
 let game = null;
 let playerColor = 'blue';
+var motionTrailLength = 30;
+var positions = [];
 
 let protocol = location.protocol.replace(/^http/, 'ws').replace(/^https/, 'ws');
 // retrieve gameId from URL parameters
@@ -203,7 +205,7 @@ ws.onmessage = async message => {
 }
 
 /****************** Render the entire canvas below ******************/
-
+ 
 // play
 window.onload = function() {
     mouseEventCanvas = document.getElementById('mouseEventCanvas');
@@ -212,13 +214,13 @@ window.onload = function() {
     canvasContext.fillStyle = 'pink';
     canvasContext.font = "70px arcadeclassic";
 
-    function redServes(evt) {
+    function redServes(e) {
         sendBallSpeedX = true;
         redIsServing = false;
         mouseEventCanvas.removeEventListener('click', redServes);
     }
 
-    function blueServes(evt) {
+    function blueServes(e) {
         blueIsServing = false;
         ballSpeedX = 5;
         function getRandomNumberBetween(min,max){
@@ -244,8 +246,8 @@ window.onload = function() {
     };
     requestAnimationFrame(mainGameLoop);
 
-    mouseEventCanvas.addEventListener('mousemove', function(evt) {
-        let eventMousePos = calculateMousePos(evt);
+    mouseEventCanvas.addEventListener('mousemove', function(e) {
+        let eventMousePos = calculateMousePos(e);
 
         if (playerColor === 'blue') {
             if(eventMousePos.x !== null || eventMousePos.x !== undefined) {
@@ -260,8 +262,6 @@ window.onload = function() {
 
     // position of the ball before the initial serve
     ballX = (25 + PADDLE_THICKNESS);
-
-
 } // window onload
 
 function moveEverything() {
@@ -292,7 +292,6 @@ function moveEverything() {
                 return Math.floor(Math.random()*(max-min+1)+min);
             }
             ballSpeedY = getRandomNumberBetween(-4, 4);
-            // ballY = mousePosRed.y;
             sendBallSpeedX = false;
             redIsServing = false;
         }
@@ -440,7 +439,7 @@ function ballReset() {
         redIsServing = true;
 
         if (!multiplayerMode && !scoreBoard) {
-            let computerServe = function(evt) {
+            let computerServe = function(e) {
                 ballSpeedX = 5;
             };
             
@@ -463,7 +462,13 @@ function ballReset() {
 } // ballReset()
 
 function drawEverything() {
-    if (scoreBoard) canvasContext.filter = 'blur(4px)';
+    if (scoreBoard) {
+        canvasContext.filter = 'blur(4px)';
+
+        // if (navigator.userAgent.indexOf("Safari") != -1) {
+        //     canvasContext.globalAlpha = 0.2;
+        // }
+    }
 
     // blanks the screen black
     colorRect(0, 0, canvas.width, canvas.height, 'black');
@@ -483,7 +488,19 @@ function drawEverything() {
         ballY = mousePosBlue.y;
     }
 
+    // draw the trail for the puck
+    for (var i = 1; i < positions.length; i++) {
+        var ratio = i / positions.length;
+        canvasContext.beginPath();
+        canvasContext.arc(positions[i].x, positions[i].y, i/(positions.length/10), 0, Math.PI*2, true);
+        canvasContext.fillStyle = "rgba(67, 54, 255, " + ratio / 2 + ")";
+        canvasContext.fill();
+    }
+
     colorCircle(ballX, ballY, 10, 'yellow');
+
+    // store the puck position to be used for the trail
+    storeLastPosition(ballX, ballY);
 
     //left player paddle
     colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , 'blue');
@@ -495,6 +512,9 @@ function drawEverything() {
     if (scoreBoard) {
         canvasContext.fillStyle = 'pink';
         canvasContext.filter = 'blur(0px)';
+        // if (navigator.userAgent.indexOf("Safari") != -1) {
+        //     canvasContext.globalAlpha = 0;
+        // }
 
         if (multiplayerMode) {
             if (winner === 'blue' && playerColor === 'blue') {
@@ -531,11 +551,11 @@ function drawEverything() {
     }
 } // drawEverything()
 
-function calculateMousePos(evt) {
+function calculateMousePos(e) {
     var rect = canvas.getBoundingClientRect();
     var root = document.documentElement;
-    var mouseX = evt.clientX - rect.left - root.scrollLeft;
-    var mouseY = evt.clientY - rect.top - root.scrollTop;
+    var mouseX = e.clientX - rect.left - root.scrollLeft;
+    var mouseY = e.clientY - rect.top - root.scrollTop;
     return {
         x: mouseX,
         y: mouseY
@@ -543,7 +563,7 @@ function calculateMousePos(evt) {
 }
 
 // while on the black screen when you receive the scores, this fxn allows the player to click to restart the game
-function handleMouseClick(evt) {
+function handleMouseClick(e) {
     if (playerColor === 'red') {
         sendPlayAgain = true;
     }
@@ -561,7 +581,7 @@ function handleMouseClick(evt) {
         console.log('robo served');
         redIsServing = false;
 
-        let computerServe = function(evt) {
+        let computerServe = function(e) {
             ballSpeedX = 5;
         };
         
@@ -621,23 +641,24 @@ function colorPaddle(width, topX, topY, bottomX, bottomY, color) {
 }
 
 function colorCircle(centerX, centerY, radius, drawColor) {
-    // shadow
-    canvasContext.shadowColor = '#ff6200';
-    let topAmountOfShadow = Math.abs(ballSpeedX) + Math.abs(ballSpeedY);
-    canvasContext.shadowBlur = topAmountOfShadow*2;
-    canvasContext.shadowOffsetX = -ballSpeedX;
-    canvasContext.shadowOffsetY = -ballSpeedY;
-
-    canvasContext.fillStyle = drawColor;
+    // canvasContext.fillStyle = drawColor;
     canvasContext.beginPath();
     canvasContext.arc(centerX, centerY, radius, 0, Math.PI*2, true);
+    canvasContext.fillStyle = 'rgb(255, 255, 0)';
     canvasContext.fill();
+}
 
-    // no shadow
-    canvasContext.shadowColor = null;
-    canvasContext.shadowBlur = 0;
-    canvasContext.shadowOffsetX = 0;
-    canvasContext.shadowOffsetY = 0;
+function storeLastPosition(ballX, ballY) {
+    // push an item
+    positions.push({
+      x: ballX,
+      y: ballY
+    });
+   
+    //get rid of first item
+    if (positions.length > motionTrailLength) {
+      positions.shift();
+    }
 }
 
 // Since Async Clipboard API is not supported for all browser!
