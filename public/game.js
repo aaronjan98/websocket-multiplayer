@@ -493,7 +493,7 @@ function drawEverything() {
         var ratio = i / positions.length;
         canvasContext.beginPath();
         canvasContext.arc(positions[i].x, positions[i].y, i/(positions.length/10), 0, Math.PI*2, true);
-        canvasContext.fillStyle = "rgba(67, 54, 255, " + ratio / 2 + ")";
+        canvasContext.fillStyle = "rgba(27, 2, 163, " + ratio / 2 + ")";
         canvasContext.fill();
     }
 
@@ -503,10 +503,10 @@ function drawEverything() {
     storeLastPosition(ballX, ballY);
 
     //left player paddle
-    colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , 'blue');
+    colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , '#440BD4');
     
     //right computer paddle
-    colorPaddle(PADDLE_THICKNESS, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y + PADDLE_HEIGHT , 'red');
+    colorPaddle(PADDLE_THICKNESS, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y + PADDLE_HEIGHT , '#8f1c11');
 
     // blacks the screen at the end of the game and tells who won
     if (scoreBoard) {
@@ -610,17 +610,17 @@ function computerMovement() {
 }
 
 function colorRect(leftX, topY, width, height, drawColor) {
-    canvasContext.shadowColor = '#009DFF';
+    canvasContext.shadowColor = 'BLACK';
     canvasContext.shadowBlur = 50;
     canvasContext.shadowOffsetX = 1;
     canvasContext.shadowOffsetY = 1;
     
     canvasContext.globalCompositeOperation='source-over';
     canvasContext.rect(1, 1, 698, 498);
-    canvasContext.fillStyle = "#9420C0";
+    canvasContext.fillStyle = "#bc00fe";
     canvasContext.fill();
     canvasContext.lineWidth = 5;
-    canvasContext.strokeStyle = "#3498db";
+    canvasContext.strokeStyle = "#1B02A3";
     canvasContext.stroke();
 
     // no shadow

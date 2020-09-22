@@ -1,7 +1,7 @@
 html, body {
     margin: 0;
     padding: 0;
-    background-color: #9420C0;
+    background-color: #006Af9;
     color: black;
 }
 
@@ -21,7 +21,7 @@ html, body {
 
 .container h2 {
     position: relative;
-    top: 400px;
+    top: 405px;
 }
 
 .container .instructions {
@@ -88,13 +88,13 @@ html, body {
 
 .container .multiplayer .invite-overlay {
     border: 0; 
-    background-color: #584cfa; 
+    background-color: #2d7ae0; 
     display: flex;
     align-items: center;
 }
 
 .container #gameCanvas {
-    box-shadow: 0 10px 30px 0 #3498db, 0 -10px 30px 0 #3498db;
+    box-shadow: 0 10px 30px 0 #1B02A3, 0 -10px 30px 0 #1B02A3;
 }
 
 .btn {
@@ -102,10 +102,10 @@ html, body {
     -webkit-appearance: none;
        -moz-appearance: none;
             appearance: none;
-    background-color: transparent;
-    border: 2px solid #e74c3c;
+    background-color: #2d7ae0;
+    border: 2px solid #2d7ae0;
     border-radius: 0.2em;
-    color: #e74c3c;
+    color: #2d7ae0;
     cursor: pointer;
     display: -webkit-box;
     display: flex;
@@ -131,9 +131,9 @@ html, body {
        -moz-appearance: none;
             appearance: none;
     background-color: transparent;
-    border: 2px solid #e74c3c;
+    border: 2px solid #5319FB;
     border-radius: 0px 7px 7px 0px;
-    color: #e74c3c;
+    color: #5319FB;
     cursor: pointer;
     display: -webkit-box;
     display: flex;
@@ -155,26 +155,26 @@ html, body {
 }
 
 .third {
-    border-color: #584cfa;
-    color: black;
-    box-shadow: 0 0 40px 40px #584cfa inset, 0 0 0 0 #584cfa;
-    -webkit-transition: all 150ms ease-in-out;
-    transition: all 150ms ease-in-out;
-}
-.third:hover {
-    box-shadow: 0 0 10px 0 #4336ff inset, 0 0 10px 4px #4336ff;
-}
-
-.copyBtnStyle {
     border-color: #4336ff;
     color: black;
     box-shadow: 0 0 40px 40px #4336ff inset, 0 0 0 0 #4336ff;
     -webkit-transition: all 150ms ease-in-out;
     transition: all 150ms ease-in-out;
 }
+.third:hover {
+    box-shadow: 0 0 10px 0 #1B02A3 inset, 0 0 10px 1px #1B02A3;
+}
+
+.copyBtnStyle {
+    border-color: #5319FB;
+    color: black;
+    box-shadow: 0 0 40px 40px #4336ff inset, 0 0 0 0 #4336ff;
+    -webkit-transition: all 150ms ease-in-out;
+    transition: all 150ms ease-in-out;
+}
 .copyBtnStyle:hover {
-    border-color: #5044fa;
-    box-shadow: 0 0 20px 0 #3122fa inset, 0 0 20px 6px #5246f8;
+    border-color: #1B02A3;
+    box-shadow: 0 0 20px 0 #1B02A3 inset, 0 0 20px 1px #1B02A3
 }
 
 .invite-input {
@@ -182,16 +182,16 @@ html, body {
     width: 100%;
 } /* necessary to give position: relative to parent. */
 
-.invite-overlay {
+.container .multiplayer .invite-overlay {
     position: absolute;
     pointer-events: none;
-    background-color: #3498db;
+    background-color: #2d7ae0;
     opacity: 1;
-    left: 5px;
-    right: -13px;
+    left: 6px;
+    right: -16px;
     top: 2px;
     bottom: 2px;
-    border-radius: 7px 0px 0px 7px;
+    border-radius: 5px 0px 0px 5px;
     color: black;
     font-family: "Montserrat", sans-serif;
     font-weight: 500;
@@ -219,7 +219,7 @@ input[type="text"] {
 
 .effect-1 {
     border: 0; 
-    background-color: #9420C0; 
+    background-color: #2d7ae0; 
     padding: 7px 0;
     display: flex;
     align-self: flex-end;
