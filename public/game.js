@@ -8,7 +8,7 @@ let ballSpeedY = 0;
 
 var player1Score = 0;
 var player2Score = 0;
-const WINNING_SCORE = 2;
+const WINNING_SCORE = 3;
 var winner = null;
 var count = 0;
 

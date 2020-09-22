@@ -16,6 +16,7 @@
         <canvas class="canvas" id="mouseEventCanvas"></canvas>
         
         <!-- Start Multiplayer Game -->
+        <h2>Invite a friend!</h2>
         <div class="multiplayer">
             <div class="invite-input">
                 <input class="multiplayer-item effect-1 btn third" type="text" id="txtGameId" value="" readonly="">
@@ -28,6 +29,17 @@
 
         <!-- connect to websocket upon initial opening of the browser-->
         <script src="game.js"></script>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <ul>
+                <li>When first loading the page, you are set to play against Robo the computer.</li>
+                <li>To play a multiplayer game, click the copy button and send the link to your opponent.  When they go to the url, both of y'all will be automatically connected to a match.</li>
+                <li>Three points is the minimum to win a game.  A player has to win by two points.</li>
+                <li>Your paddle moves based on your mouse position (desktop game).</li>
+                <li>Tap to serve the puck.</li>
+            </ul>
+        </div>
     </div>
 </body>
 </html>

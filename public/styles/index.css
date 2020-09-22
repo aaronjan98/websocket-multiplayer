@@ -19,6 +19,20 @@ html, body {
     position: relative;
 }
 
+.container h2 {
+    position: relative;
+    top: 400px;
+}
+
+.container .instructions {
+    position: relative;
+    top: 370px;
+    width: 700px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
 .container .canvas {
     position: absolute;
     display: flex;
@@ -34,17 +48,35 @@ html, body {
 .container .pong-title {
     font-size: 40px;
     color: black;
+    position: relative;
+    display: flex;
+    bottom: 115px;
+}
+
+.container .instructions h3 {
+    padding: 5px 5px 5px 16px;
+    margin: 15px 0 0 0;
+}
+
+.container .instructions ul {
+    padding-left: 16px;
+    margin: 10px 10px 30px 0;
+
+}
+
+.container .instructions ul li {
+    padding: 5px 0;
 }
 
 .container .multiplayer {
     display: flex;
-    width: 720px;
+    width: 688px;
     height: 40px;
     margin-top: 30px;
     justify-content: center;
     align-items: center;
     position: relative;
-    top: 230px;
+    top: 370px;
 }
 
 .container .multiplayer .multiplayer-item {
