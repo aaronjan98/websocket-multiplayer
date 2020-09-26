@@ -135,6 +135,23 @@ async function joinNewMultiplayerGame() {
 //     setInterval(ping, 30000);
 // }
 
+// Listen for the connection open event then call the sendMessage function          
+ws.onopen = function (e) {      
+    console.log("Connected");      
+}
+
+// Listen for the close connection event
+ws.onclose = function (e) {      
+    alert("Disconnected: " + e.reason);
+    multiplayerMode = false;
+}
+
+// Listen for connection errors
+ws.onerror = function (e) {      
+    alert("Error");  
+    multiplayerMode = false;
+}
+
 // when the server sends the client a message
 ws.onmessage = async message => {
     // check if connectin is lost
