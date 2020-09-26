@@ -56,6 +56,17 @@ const divBoard = document.getElementById('divBoard');
 
 btnCreate.addEventListener('click', async _ => {
     copyToClipboard(myURL.href);
+
+    divPlayers.style.opacity = 1;
+    divPlayers.style.width = '100vw';
+    divPlayers.style.height = '30px';
+    divPlayers.style.background = 'green';
+    divPlayers.style.justifyContent = 'center';
+    divPlayers.style.alignItems = 'center';
+    divPlayers.textContent = 'copied!';
+    setTimeout(() => {
+        divPlayers.style.opacity = 0;
+    }, 4000);
 })
 
 // wiring events
@@ -164,11 +175,6 @@ ws.onmessage = async message => {
             mousePosBlue = {x: 250, y: 250};
             mousePosRed = {x: 250, y: 250};
         }
-        
-        // while divPlayers is empty, remove all the elements
-        while(divPlayers.firstChild) {
-            divPlayers.removeChild(divPlayers.firstChild);
-        }
 
         game.clients.forEach(c => {
             // c.color is the personal color so this makes it dynamic
@@ -233,6 +239,7 @@ window.onload = function() {
     function mainGameLoop() {
         moveEverything();
         playMethod();
+        drawEverything();
 
         if (playerColor === 'red' && redIsServing && !scoreBoard) {
             mouseEventCanvas.addEventListener('click', redServes);
@@ -240,7 +247,6 @@ window.onload = function() {
             ballY = mousePosBlue.y;
             mouseEventCanvas.addEventListener('click', blueServes);
         };
-        drawEverything();
 
         requestAnimationFrame(mainGameLoop);
     };
@@ -444,7 +450,7 @@ function ballReset() {
             };
             
             setTimeout(() => {
-                function getRandomNumberBetween(min,max){
+                function getRandomNumberBetween(min,max) {
                     return Math.floor(Math.random()*(max-min+1)+min);
                 }
                 ballSpeedY = getRandomNumberBetween(-4, 4);
@@ -453,8 +459,9 @@ function ballReset() {
             }, 1500);
         }
     // hold the puck until you click to serve
-    } else if (ballSpeedX >= 0){ // paddle 1 scored
+    } else if (ballSpeedX >= 0) { // paddle 1 scored
         blueIsServing = true;
+        redIsServing = false;
         ballSpeedX = 0;
         ballX = (25 + PADDLE_THICKNESS);
         ballY = mousePosBlue.y;
@@ -552,10 +559,8 @@ function drawEverything() {
 } // drawEverything()
 
 function calculateMousePos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var root = document.documentElement;
-    var mouseX = e.clientX - rect.left - root.scrollLeft;
-    var mouseY = e.clientY - rect.top - root.scrollTop;
+    var mouseX = e.offsetX;
+    var mouseY = e.offsetY;
     return {
         x: mouseX,
         y: mouseY
@@ -574,15 +579,13 @@ function handleMouseClick(e) {
     
     mouseEventCanvas.removeEventListener('click', handleMouseClick);
 
-    console.log('red is serving: ', redIsServing);
-    
     // setTimeout for robo to shoot starts after scoreBoard is exited
     if (!multiplayerMode && redIsServing) {
         console.log('robo served');
         redIsServing = false;
 
         let computerServe = function(e) {
-            ballSpeedX = 5;
+            ballSpeedX = -5;
         };
         
         setTimeout(() => {

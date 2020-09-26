@@ -10,13 +10,24 @@ html, body {
     src: url(arcadeclassic.ttf);
 }
 
+body #divPlayers {
+    width: 100vw;
+    height: 30px;
+    background-color: #006Af9;
+    display: flex;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    -webkit-transition: all 250ms ease-in-out;
+    transition: all 250ms ease-in-out;
+}
+
 .container {
-    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
+    top: 115px;
 }
 
 .container h2 {
@@ -50,16 +61,16 @@ html, body {
     color: black;
     position: relative;
     display: flex;
-    bottom: 115px;
+    bottom: 125px;
 }
 
 .container .instructions h3 {
-    padding: 5px 5px 5px 16px;
+    padding: 5px 5px 5px 20px;
     margin: 15px 0 0 0;
 }
 
 .container .instructions ul {
-    padding-left: 16px;
+    padding-left: 20px;
     margin: 10px 10px 30px 0;
 
 }
@@ -220,7 +231,7 @@ input[type="text"] {
 .effect-1 {
     border: 0; 
     background-color: #2d7ae0; 
-    padding: 7px 0;
+    padding: 7px 10px;
     display: flex;
     align-self: flex-end;
     justify-content: flex-start;
