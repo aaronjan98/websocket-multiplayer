@@ -49,12 +49,17 @@ var requestAnimationFrame = window.requestAnimationFrame ||
 let ws = new WebSocket(`${protocol}//websocket-multiplayer-pong.herokuapp.com`);
 
 // HTML elements
-const btnCreate = document.getElementById('btnCreate');
+// const btnCreate = document.getElementById('btnCreate');
+const copyLink = document.getElementsByClassName('copyLink')
 const txtGameId = document.getElementById('txtGameId');
 const divPlayers = document.getElementById('divPlayers');
 const divBoard = document.getElementById('divBoard');
 
-btnCreate.addEventListener('click', async _ => {
+for (var i = 0; i < copyLink.length; i++) {
+    copyLink[i].addEventListener('click', copyInviteLink, false);
+}
+
+function copyInviteLink() {
     copyToClipboard(myURL.href);
 
     divPlayers.style.opacity = 1;
@@ -67,7 +72,7 @@ btnCreate.addEventListener('click', async _ => {
     setTimeout(() => {
         divPlayers.style.opacity = 0;
     }, 4000);
-})
+}
 
 // wiring events
 function joinNewMultiplayerGame() {
@@ -142,8 +147,8 @@ ws.onmessage = async message => {
         console.log('Game successfully created with ID: ' + gameId);
 
         // create shareable url for multiplayer game
-        myURL = new URL('https://multiplayer-pong.netlify.app/');
-        // myURL = new URL('http://localhost:8080/');
+        // myURL = new URL('https://multiplayer-pong.netlify.app/');
+        myURL = new URL('http://localhost:8080/');
 
         myURL.searchParams.set('', gameId);
         txtGameId.defaultValue = myURL.href;
