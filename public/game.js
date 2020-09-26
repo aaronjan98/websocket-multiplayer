@@ -142,13 +142,13 @@ ws.onopen = function (e) {
 
 // Listen for the close connection event
 ws.onclose = function (e) {      
-    alert("Disconnected: " + e.reason);
+    alert("Disconnected, try refreshing the page");
     multiplayerMode = false;
 }
 
 // Listen for connection errors
-ws.onerror = function (e) {      
-    alert("Error");  
+ws.onerror = function (e) {
+    alert("Error");
     multiplayerMode = false;
 }
 
