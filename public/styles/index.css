@@ -53,7 +53,7 @@ body #divPlayers {
 
 .container .canvas#mouseEventCanvas {
     width: 100vw;
-    height: 500px;
+    height: 480px;
 }
 
 .container .pong-title {

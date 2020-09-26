@@ -65,10 +65,10 @@ function copyInviteLink() {
     divPlayers.style.opacity = 1;
     divPlayers.style.width = '100vw';
     divPlayers.style.height = '30px';
-    divPlayers.style.background = 'green';
+    divPlayers.style.background = '#05ab74';
     divPlayers.style.justifyContent = 'center';
     divPlayers.style.alignItems = 'center';
-    divPlayers.textContent = 'copied!';
+    divPlayers.textContent = 'copied ✔️';
     setTimeout(() => {
         divPlayers.style.opacity = 0;
     }, 4000);
@@ -113,36 +113,36 @@ async function joinNewMultiplayerGame() {
     ws.send(JSON.stringify(joinPayload));
 };
 
-function ping() {
-    if (multiplayerMode) {
-        ws.send('__ping__');
-        tm = setTimeout(function () {
-            console.log('connection closed');
-            divPlayers.style.background = 'red';
-            divPlayers.textContent = 'connection closed';
-            divPlayers.style.opacity = 1;
-            multiplayerMode = false;
-        }, 5000);
-    }
-    divPlayers.style.opacity = 0;
-}
+// function ping() {
+//     if (multiplayerMode) {
+//         ws.send('__ping__');
+//         tm = setTimeout(function () {
+//             console.log('connection closed');
+//             divPlayers.style.background = '#d91403';
+//             divPlayers.textContent = 'connection closed';
+//             divPlayers.style.opacity = 1;
+//             multiplayerMode = false;
+//         }, 5000);
+//     }
+//     divPlayers.style.opacity = 0;
+// }
 
-function pong() {
-    clearTimeout(tm);
-}
+// function pong() {
+//     clearTimeout(tm);
+// }
 
-ws.onopen = function () {
-    setInterval(ping, 30000);
-}
+// ws.onopen = function () {
+//     setInterval(ping, 30000);
+// }
 
 // when the server sends the client a message
 ws.onmessage = async message => {
     // check if connectin is lost
-    var msg = message.data;
-    if (multiplayerMode && msg == '__pong__') {
-        pong();
-        return;
-    }
+    // var msg = message.data;
+    // if (multiplayerMode && msg == '__pong__') {
+    //     pong();
+    //     return;
+    // }
     
     // string server sends: message.data
     function response_fxn() {
@@ -186,8 +186,8 @@ ws.onmessage = async message => {
         console.log('Game successfully created with ID: ' + gameId);
 
         // create shareable url for multiplayer game
-        // myURL = new URL('https://multiplayer-pong.netlify.app/');
-        myURL = new URL('http://localhost:8080/');
+        myURL = new URL('https://multiplayer-pong.netlify.app/');
+        // myURL = new URL('http://localhost:8080/');
 
         myURL.searchParams.set('', gameId);
         txtGameId.defaultValue = myURL.href;
@@ -363,6 +363,9 @@ function moveEverything() {
 
                 var deltaY = ballY - (paddle1Y+PADDLE_HEIGHT/2);
                 ballSpeedY = deltaY * 0.15;
+            // // show the puck missing the paddle by it continuing to move beyond the paddle
+            // } else if ((ballX - 10) > -10) {
+            //     return;
             // outside of paddle, red scores
             } else {
                 player2Score++;
@@ -374,6 +377,9 @@ function moveEverything() {
                 ballSpeedX = -ballSpeedX;
                 var deltaY = ballY - (paddle2Y+PADDLE_HEIGHT/2);
                 ballSpeedY = deltaY * 0.15;
+            // // show the puck missing the paddle by it continuing to move beyond the paddle
+            // } else if ((ballX + 10) < canvas.width+10) {
+            //     return;
             } else {
                 player1Score++;
                 ballReset();
@@ -557,7 +563,7 @@ function drawEverything() {
     colorPaddle(PADDLE_THICKNESS, 20, paddle1Y, 20, paddle1Y + PADDLE_HEIGHT , '#440BD4');
     
     //right computer paddle
-    colorPaddle(PADDLE_THICKNESS, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y + PADDLE_HEIGHT , '#8f1c11');
+    colorPaddle(PADDLE_THICKNESS, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y, canvas.width - (PADDLE_THICKNESS + 10), paddle2Y + PADDLE_HEIGHT , '#800000');
 
     // blacks the screen at the end of the game and tells who won
     if (scoreBoard) {
@@ -607,7 +613,7 @@ function calculateMousePos(e) {
     var mouseY = e.offsetY;
     return {
         x: mouseX,
-        y: mouseY
+        y: mouseY+10
     };
 }
 
