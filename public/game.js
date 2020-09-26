@@ -75,16 +75,26 @@ function copyInviteLink() {
 }
 
 // wiring events
-function joinNewMultiplayerGame() {
-    try {
-
-        if (game.clients.length === 1) {
-            // ws.close();
-            multiplayerMode = false;
-        }
-    } catch (TypeError) {
-        multiplayerMode = false;
-    }
+async function joinNewMultiplayerGame() {
+    
+    // function getClientLength() {
+    //     return new Promise((resolve, reject) => {
+    //         resolve(game.clients.length);
+    //     })
+    // }
+    // console.log('game.clients.length: ', game);
+    // try {
+        
+    //     if (numClients === 1) {
+    //         numClients = await getClientLength();
+    //         console.log('close existing connection');
+    //         // ws.close(1000, "Closing Connection Normally");
+    //         // Close the WebSocket connection
+    //         multiplayerMode = false;
+    //     }
+    // } catch (TypeError) {
+    //     multiplayerMode = false;
+    // }
 
     // only for red player
     if (url.search.length) {
@@ -103,8 +113,37 @@ function joinNewMultiplayerGame() {
     ws.send(JSON.stringify(joinPayload));
 };
 
+function ping() {
+    if (multiplayerMode) {
+        ws.send('__ping__');
+        tm = setTimeout(function () {
+            console.log('connection closed');
+            divPlayers.style.background = 'red';
+            divPlayers.textContent = 'connection closed';
+            divPlayers.style.opacity = 1;
+            multiplayerMode = false;
+        }, 5000);
+    }
+    divPlayers.style.opacity = 0;
+}
+
+function pong() {
+    clearTimeout(tm);
+}
+
+ws.onopen = function () {
+    setInterval(ping, 30000);
+}
+
 // when the server sends the client a message
 ws.onmessage = async message => {
+    // check if connectin is lost
+    var msg = message.data;
+    if (multiplayerMode && msg == '__pong__') {
+        pong();
+        return;
+    }
+    
     // string server sends: message.data
     function response_fxn() {
         return new Promise((resolve, reject) => {
