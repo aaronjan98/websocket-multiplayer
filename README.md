@@ -1,2 +1,4 @@
-# websocket
-Building multiplayer game with Native websockets
+# Multiplayer Pong Game
+created with native nodeJS websockets.
+
+#### [Deployed here](https://multiplayer-pong.netlify.app/)
